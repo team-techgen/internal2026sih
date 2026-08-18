@@ -1,20 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================
-       CREATE HOME BUTTON
-    ========================= */
-
-    const homeBar = document.createElement("button");
-
-    homeBar.className = "home-bar";
-
-    homeBar.innerHTML = "☰ Home";
-
-    document.body.appendChild(homeBar);
-
-
-    /* =========================
-       CREATE SIDEBAR CONTAINER
+       SIDEBAR CONTAINER
     ========================= */
 
     const sidebarContainer = document.createElement("div");
@@ -25,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       CREATE OVERLAY
+       OVERLAY
     ========================= */
 
     const overlay = document.createElement("div");
@@ -36,10 +23,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       LOAD SIDEBAR HTML
+       LOAD SIDEBAR
     ========================= */
 
-    fetch("/sidebar/sidebar.html")
+    fetch("../sidebar/sidebar.html")
 
         .then(response => {
 
@@ -48,46 +35,39 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             return response.text();
+
         })
 
         .then(data => {
 
             sidebarContainer.innerHTML = data;
 
-            const sidebar = document.getElementById("sidebar");
+            const sidebar =
+                document.getElementById("sidebar");
 
             const closeButton =
                 document.getElementById("closeSidebar");
 
 
             /* =========================
-               OPEN SIDEBAR
+               CLOSE BUTTON
             ========================= */
 
-            homeBar.addEventListener("click", function () {
+            if (closeButton) {
 
-                sidebar.classList.add("active");
+                closeButton.addEventListener("click", function () {
 
-                overlay.classList.add("active");
+                    sidebar.classList.remove("active");
 
-            });
+                    overlay.classList.remove("active");
+
+                });
+
+            }
 
 
             /* =========================
-               CLOSE SIDEBAR
-            ========================= */
-
-            closeButton.addEventListener("click", function () {
-
-                sidebar.classList.remove("active");
-
-                overlay.classList.remove("active");
-
-            });
-
-
-            /* =========================
-               CLOSE WHEN CLICKING OUTSIDE
+               OVERLAY CLICK
             ========================= */
 
             overlay.addEventListener("click", function () {

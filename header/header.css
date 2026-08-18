@@ -1,0 +1,72 @@
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    width: 100%;
+    height: 85px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 10px 20px;
+
+    background-color: white;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #ddd;
+
+    gap: 20px;
+}
+
+
+/* =========================
+   MENU BUTTON
+========================= */
+
+.home-button {
+    width: 55px;
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #222;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.home-button:hover {
+    background-color: #444;
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.logo {
+    height: 70px;
+
+    width: auto;
+
+    max-width: 200px;
+
+    object-fit: contain;
+
+    display: block;
+
+    flex-shrink: 0;
+}
