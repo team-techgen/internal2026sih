@@ -4,10 +4,22 @@
     box-sizing: border-box;
 }
 
+html,
 body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
     font-family: Arial, Helvetica, sans-serif;
+
     color: #102a2d;
 }
+
 
 /* =========================
    HERO
@@ -46,7 +58,10 @@ body {
 }
 
 
-/* Decorative background circle */
+/* =========================
+   DECORATIVE TOP CIRCLE
+========================= */
+
 .hero::before {
     content: "";
 
@@ -61,9 +76,15 @@ body {
     border-radius: 50%;
 
     border: 1px solid rgba(15, 118, 110, 0.15);
+
+    pointer-events: none;
 }
 
-/* Decorative background circle */
+
+/* =========================
+   DECORATIVE BOTTOM CIRCLE
+========================= */
+
 .hero::after {
     content: "";
 
@@ -78,16 +99,63 @@ body {
     border-radius: 50%;
 
     background: rgba(20, 184, 166, 0.08);
+
+    pointer-events: none;
 }
 
-/* Hello Team */
-h1 {
+
+/* =========================
+   HERO HEADING
+========================= */
+
+.hero h1 {
     position: relative;
+
     z-index: 1;
 
+    margin: 0;
+
     font-size: clamp(3rem, 8vw, 7rem);
+
+    font-weight: 700;
 
     color: #0f766e;
 
     letter-spacing: -3px;
+
+    text-align: center;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+
+    .hero {
+        min-height: 450px;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.8rem, 14vw, 4.5rem);
+
+        letter-spacing: -2px;
+    }
+
+    .hero::before {
+        width: 300px;
+        height: 300px;
+
+        top: -120px;
+        right: -100px;
+    }
+
+    .hero::after {
+        width: 220px;
+        height: 220px;
+
+        bottom: -100px;
+        left: -80px;
+    }
 }
