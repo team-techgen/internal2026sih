@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!response.ok) {
                 throw new Error(
-                    "Footer could not be loaded: " + response.status
+                    "Footer HTML not found: " + response.status
                 );
             }
 
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         .catch(error => {
 
-            console.error("Footer Error:", error);
+            console.error("FOOTER ERROR:", error);
 
         });
 
