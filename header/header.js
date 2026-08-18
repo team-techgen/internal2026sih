@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    /* =========================
+       CREATE HEADER CONTAINER
+    ========================= */
+
     const headerContainer = document.createElement("div");
 
     headerContainer.id = "header-container";
@@ -7,9 +11,21 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.prepend(headerContainer);
 
 
+    /* =========================
+       LOAD HEADER
+    ========================= */
+
     fetch("../header/header.html")
 
-        .then(response => response.text())
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Header could not be loaded");
+            }
+
+            return response.text();
+
+        })
 
         .then(data => {
 
@@ -17,37 +33,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             /* =========================
-               SIDEBAR TOGGLE
+               SIDEBAR BUTTON
             ========================= */
 
-            const sidebarButton =
+            const menuButton =
                 document.getElementById("sidebarToggle");
 
 
-            sidebarButton.addEventListener("click", function () {
+            if (menuButton) {
 
-                const sidebar =
-                    document.getElementById("sidebar");
+                menuButton.addEventListener("click", function () {
 
-                const overlay =
-                    document.querySelector(".sidebar-overlay");
+                    const sidebar =
+                        document.getElementById("sidebar");
+
+                    const overlay =
+                        document.querySelector(".sidebar-overlay");
 
 
-                if (sidebar) {
-                    sidebar.classList.add("active");
-                }
+                    if (sidebar) {
+                        sidebar.classList.add("active");
+                    }
 
-                if (overlay) {
-                    overlay.classList.add("active");
-                }
+                    if (overlay) {
+                        overlay.classList.add("active");
+                    }
 
-            });
+                });
+
+            }
 
         })
 
         .catch(error => {
 
-            console.error("Header loading error:", error);
+            console.error("Header Error:", error);
 
         });
 
