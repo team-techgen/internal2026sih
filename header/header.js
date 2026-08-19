@@ -1,4 +1,4 @@
-fetch("../header/header.html")
+fetch("../header/header.html?v=2")
     .then(response => {
 
         if (!response.ok) {
