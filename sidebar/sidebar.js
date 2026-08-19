@@ -1,89 +1,138 @@
-document.addEventListener("DOMContentLoaded", function () {
+let sidebarLoaded = false;
+let headerLoaded = false;
+
+
+/* =========================
+   LOAD SIDEBAR
+========================= */
+
+fetch("../sidebar/sidebar.html")
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Sidebar file not found");
+        }
+
+        return response.text();
+
+    })
+    .then(data => {
+
+        document.getElementById("sidebar").innerHTML = data;
+
+        sidebarLoaded = true;
+
+        setupSidebar();
+
+    })
+    .catch(error => {
+
+        console.error("Sidebar Error:", error);
+
+    });
+
+
+/* =========================
+   WAIT FOR HEADER
+========================= */
+
+document.addEventListener("headerLoaded", function () {
+
+    headerLoaded = true;
+
+    setupSidebar();
+
+});
+
+
+/* =========================
+   SETUP SIDEBAR
+========================= */
+
+function setupSidebar() {
+
+    if (!sidebarLoaded || !headerLoaded) {
+        return;
+    }
+
+
+    const menuButton =
+        document.getElementById("sidebarToggle");
+
+    const closeButton =
+        document.getElementById("sidebarClose");
+
+    const sidebar =
+        document.getElementById("sidebarPanel");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
 
     /* =========================
-       SIDEBAR CONTAINER
+       CHECK ELEMENTS
     ========================= */
 
-    const sidebarContainer = document.createElement("div");
+    if (!menuButton) {
+        console.error("Menu button not found");
+        return;
+    }
 
-    sidebarContainer.id = "sidebar-container";
+    if (!closeButton) {
+        console.error("Close button not found");
+        return;
+    }
 
-    document.body.appendChild(sidebarContainer);
+    if (!sidebar) {
+        console.error("Sidebar not found");
+        return;
+    }
 
 
     /* =========================
-       OVERLAY
+       OPEN SIDEBAR
     ========================= */
 
-    const overlay = document.createElement("div");
+    menuButton.addEventListener("click", function () {
 
-    overlay.className = "sidebar-overlay";
+        sidebar.classList.add("active");
 
-    document.body.appendChild(overlay);
+        if (overlay) {
+            overlay.classList.add("active");
+        }
+
+    });
 
 
     /* =========================
-       LOAD SIDEBAR
+       CLOSE SIDEBAR
     ========================= */
 
-    fetch("../sidebar/sidebar.html")
+    closeButton.addEventListener("click", function () {
 
-        .then(response => {
+        sidebar.classList.remove("active");
 
-            if (!response.ok) {
-                throw new Error("Sidebar could not be loaded");
-            }
+        if (overlay) {
+            overlay.classList.remove("active");
+        }
 
-            return response.text();
-
-        })
-
-        .then(data => {
-
-            sidebarContainer.innerHTML = data;
-
-            const sidebar =
-                document.getElementById("sidebar");
-
-            const closeButton =
-                document.getElementById("closeSidebar");
+    });
 
 
-            /* =========================
-               CLOSE BUTTON
-            ========================= */
+    /* =========================
+       CLOSE USING OVERLAY
+    ========================= */
 
-            if (closeButton) {
+    if (overlay) {
 
-                closeButton.addEventListener("click", function () {
+        overlay.addEventListener("click", function () {
 
-                    sidebar.classList.remove("active");
+            sidebar.classList.remove("active");
 
-                    overlay.classList.remove("active");
-
-                });
-
-            }
-
-
-            /* =========================
-               OVERLAY CLICK
-            ========================= */
-
-            overlay.addEventListener("click", function () {
-
-                sidebar.classList.remove("active");
-
-                overlay.classList.remove("active");
-
-            });
-
-        })
-
-        .catch(error => {
-
-            console.error("Sidebar Error:", error);
+            overlay.classList.remove("active");
 
         });
 
-});
+    }
+
+}

@@ -1,50 +1,69 @@
-<div id="sidebar" class="sidebar">
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
 
+<aside id="sidebarPanel" class="sidebar">
+
+    <!-- Sidebar Header -->
     <div class="sidebar-header">
+
         <h2>My Website</h2>
-        <button id="closeSidebar" class="close-btn">&times;</button>
+
+        <button id="sidebarClose"
+                class="sidebar-close"
+                type="button">
+            ×
+        </button>
+
     </div>
 
+
+    <!-- Sidebar Menu -->
     <nav class="sidebar-menu">
 
-        <a href="/Home/index.html">
-            🏠 <span>Home</span>
+        <a href="../Home/index.html">
+            🏠
+            <span>Home</span>
         </a>
 
         <a href="#">
-            📊 <span>Dashboard</span>
+            📊
+            <span>Dashboard</span>
         </a>
 
         <a href="#">
-            👤 <span>Profile</span>
+            👤
+            <span>Profile</span>
         </a>
 
         <a href="#">
-            💬 <span>Messages</span>
+            💬
+            <span>Messages</span>
         </a>
 
         <a href="#">
-            📁 <span>Projects</span>
+            📁
+            <span>Projects</span>
         </a>
 
         <a href="#">
-            ⚙️ <span>Settings</span>
+            ⚙️
+            <span>Settings</span>
         </a>
 
         <a href="#">
-            ℹ️ <span>About</span>
+            ℹ️
+            <span>About</span>
         </a>
 
         <a href="#">
-            ❓ <span>Help</span>
+            ❓
+            <span>Help</span>
+        </a>
+
+        <a href="#" class="logout">
+            🚪
+            <span>Logout</span>
         </a>
 
     </nav>
 
-    <div class="sidebar-footer">
-        <a href="#">
-            🚪 <span>Logout</span>
-        </a>
-    </div>
-
-</div>
+</aside>

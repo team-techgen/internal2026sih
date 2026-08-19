@@ -1,74 +1,24 @@
-document.addEventListener("DOMContentLoaded", function () {
+fetch("../header/header.html")
+    .then(response => {
 
-    /* =========================
-       CREATE HEADER CONTAINER
-    ========================= */
+        if (!response.ok) {
+            throw new Error("Header file not found");
+        }
 
-    const headerContainer = document.createElement("div");
+        return response.text();
+    })
+    .then(data => {
 
-    headerContainer.id = "header-container";
+        document.getElementById("header").innerHTML = data;
 
-    document.body.prepend(headerContainer);
+        // Tell sidebar.js that header is ready
+        document.dispatchEvent(
+            new Event("headerLoaded")
+        );
 
+    })
+    .catch(error => {
 
-    /* =========================
-       LOAD HEADER
-    ========================= */
+        console.error("Header Error:", error);
 
-    fetch("../header/header.html")
-
-        .then(response => {
-
-            if (!response.ok) {
-                throw new Error("Header could not be loaded");
-            }
-
-            return response.text();
-
-        })
-
-        .then(data => {
-
-            headerContainer.innerHTML = data;
-
-
-            /* =========================
-               SIDEBAR BUTTON
-            ========================= */
-
-            const menuButton =
-                document.getElementById("sidebarToggle");
-
-
-            if (menuButton) {
-
-                menuButton.addEventListener("click", function () {
-
-                    const sidebar =
-                        document.getElementById("sidebar");
-
-                    const overlay =
-                        document.querySelector(".sidebar-overlay");
-
-
-                    if (sidebar) {
-                        sidebar.classList.add("active");
-                    }
-
-                    if (overlay) {
-                        overlay.classList.add("active");
-                    }
-
-                });
-
-            }
-
-        })
-
-        .catch(error => {
-
-            console.error("Header Error:", error);
-
-        });
-
-});
+    });

@@ -1,175 +1,210 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
 /* =========================
    SIDEBAR
 ========================= */
 
 .sidebar {
+
     position: fixed;
+
     top: 0;
-    left: -280px;
+    left: 0;
 
     width: 280px;
     height: 100vh;
 
-    background: #1e1e1e;
-    color: white;
+    background: #101827;
+
+    color: #ffffff;
 
     z-index: 1000;
 
-    transition: left 0.3s ease;
+    transform: translateX(-100%);
 
-    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
 
-    display: flex;
-    flex-direction: column;
-}
+    overflow-y: auto;
 
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.25);
 
-/* SIDEBAR OPEN */
-
-.sidebar.active {
-    left: 0;
 }
 
 
 /* =========================
-   HEADER
+   OPEN SIDEBAR
+========================= */
+
+.sidebar.active {
+
+    transform: translateX(0);
+
+}
+
+
+/* =========================
+   SIDEBAR HEADER
 ========================= */
 
 .sidebar-header {
-    height: 70px;
+
+    height: 128px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    padding: 0 20px;
+    padding: 25px 25px;
 
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
 }
+
 
 .sidebar-header h2 {
+
     margin: 0;
-    font-size: 20px;
-}
 
-.close-btn {
-    background: none;
-    border: none;
+    font-size: 28px;
 
-    color: white;
+    color: #14b8a6;
 
-    font-size: 30px;
-
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    color: #ff5555;
 }
 
 
 /* =========================
-   MENU
+   CLOSE BUTTON
+========================= */
+
+.sidebar-close {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+
+    border-radius: 6px;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+}
+
+
+.sidebar-close:hover {
+
+    background: #14b8a6;
+
+    border-color: #14b8a6;
+
+    color: #ffffff;
+
+}
+
+
+/* =========================
+   SIDEBAR MENU
 ========================= */
 
 .sidebar-menu {
-    padding: 15px 10px;
-
-    flex: 1;
-}
-
-.sidebar-menu a,
-.sidebar-footer a {
 
     display: flex;
+
+    flex-direction: column;
+
+    padding: 20px 15px;
+
+}
+
+
+.sidebar-menu a {
+
+    display: flex;
+
     align-items: center;
 
     gap: 15px;
 
-    padding: 14px 15px;
+    padding: 16px 20px;
 
     margin-bottom: 5px;
 
-    color: #ddd;
+    color: #ffffff;
 
     text-decoration: none;
 
-    border-radius: 8px;
-
-    font-size: 16px;
-
-    transition: background 0.2s ease,
-                color 0.2s ease;
-}
-
-
-/* HOVER */
-
-.sidebar-menu a:hover,
-.sidebar-footer a:hover {
-
-    background: #333;
-
-    color: white;
-}
-
-
-/* =========================
-   footer
-========================= */
-
-.sidebar-footer {
-
-    padding: 15px 10px;
-
-    border-top: 1px solid #333;
-}
-
-
-/* =========================
-   HOME BUTTON
-========================= */
-
-.home-bar {
-
-    position: fixed;
-
-    top: 15px;
-    left: 15px;
-
-    z-index: 900;
-
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 10px 16px;
-
-    background: #1e1e1e;
-
-    color: white;
-
-    border: none;
+    font-size: 19px;
 
     border-radius: 8px;
 
-    cursor: pointer;
+    transition: all 0.2s ease;
 
-    font-size: 15px;
-
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-
-    transition: background 0.2s ease;
 }
 
-.home-bar:hover {
-    background: #333;
+
+.sidebar-menu a:hover {
+
+    background: rgba(20, 184, 166, 0.15);
+
+    color: #14b8a6;
+
+}
+
+
+.sidebar-menu a span {
+
+    display: inline-block;
+
 }
 
 
 /* =========================
-   DARK OVERLAY
+   LOGOUT
+========================= */
+
+.sidebar-menu .logout {
+
+    margin-top: 15px;
+
+    color: #ffb4b4;
+
+}
+
+
+.sidebar-menu .logout:hover {
+
+    background: rgba(255, 80, 80, 0.12);
+
+    color: #ff6b6b;
+
+}
+
+
+/* =========================
+   OVERLAY
 ========================= */
 
 .sidebar-overlay {
@@ -180,15 +215,52 @@
     left: 0;
 
     width: 100%;
-    height: 100%;
+    height: 100vh;
 
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.5);
 
     z-index: 999;
 
-    display: none;
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+
 }
 
+
+/* =========================
+   ACTIVE OVERLAY
+========================= */
+
 .sidebar-overlay.active {
-    display: block;
+
+    opacity: 1;
+
+    visibility: visible;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .sidebar {
+
+        width: 280px;
+
+    }
+
+    .sidebar-header {
+
+        height: 100px;
+
+    }
+
 }
