@@ -1,79 +1,63 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-
 /* =========================
    SIDEBAR
 ========================= */
 
 .sidebar {
-
     position: fixed;
 
     top: 0;
-    left: 0;
+    left: -280px;
 
-    width: 300px;
-    max-width: 85vw;
-
+    width: 280px;
     height: 100vh;
-    height: 100dvh;
 
-    background: #101827;
+    background: #024d50;
 
-    color: #ffffff;
+    color: #f4fffc;
 
-    z-index: 1000;
+    z-index: 1200;
 
-    transform: translateX(-100%);
+    transition: left 0.3s ease;
 
-    transition: transform 0.3s ease;
+    box-shadow: 3px 0 15px rgba(16, 42, 45, 0.35);
 
-    overflow-y: auto;
-
-    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
 }
 
 
 /* =========================
-   OPEN
+   SIDEBAR OPEN
 ========================= */
 
 .sidebar.active {
-    transform: translateX(0);
+    left: 0;
 }
 
 
 /* =========================
-   HEADER
+   SIDEBAR HEADER
 ========================= */
 
 .sidebar-header {
-
-    min-height: 100px;
+    height: 70px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: space-between;
 
-    padding: 20px;
+    padding: 0 20px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid #3b7775;
 }
 
-
 .sidebar-header h2 {
-
     margin: 0;
 
-    color: #14b8a6;
+    font-size: 20px;
 
-    font-size: 26px;
+    color: #8ee6b8;
 }
 
 
@@ -81,58 +65,37 @@
    CLOSE BUTTON
 ========================= */
 
-.sidebar-close {
+.close-btn {
+    background: none;
 
-    width: 38px;
-    height: 38px;
+    border: none;
 
-    flex-shrink: 0;
+    color: #f4fffc;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: transparent;
-
-    color: #ffffff;
-
-    border: 1px solid rgba(255, 255, 255, 0.4);
-
-    border-radius: 6px;
-
-    font-size: 25px;
-
-    line-height: 1;
+    font-size: 30px;
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    transition: 0.3s ease;
 }
 
-.sidebar-close:hover {
-
-    background: #14b8a6;
-
-    border-color: #14b8a6;
+.close-btn:hover {
+    color: #8ee6b8;
 }
 
 
 /* =========================
-   MENU
+   SIDEBAR MENU
 ========================= */
 
 .sidebar-menu {
+    padding: 15px 10px;
 
-    display: flex;
-
-    flex-direction: column;
-
-    padding: 15px;
+    flex: 1;
 }
 
-
-.sidebar-menu a {
+.sidebar-menu a,
+.sidebar-footer a {
 
     display: flex;
 
@@ -140,76 +103,115 @@
 
     gap: 15px;
 
-    min-height: 55px;
+    padding: 14px 15px;
 
-    padding: 12px 15px;
+    margin-bottom: 5px;
 
-    margin-bottom: 4px;
-
-    color: #ffffff;
+    color: #f4fffc;
 
     text-decoration: none;
 
-    font-size: 18px;
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* =========================
+   HOVER
+========================= */
+
+.sidebar-menu a:hover,
+.sidebar-footer a:hover {
+
+    background: #216064;
+
+    color: #8ee6b8;
+}
+
+
+/* =========================
+   SIDEBAR FOOTER
+========================= */
+
+.sidebar-footer {
+
+    padding: 15px 10px;
+
+    border-top: 1px solid #3b7775;
+}
+
+
+/* =========================
+   HOME BUTTON
+========================= */
+
+.home-bar {
+
+    position: fixed;
+
+    top: 15px;
+    left: 15px;
+
+    z-index: 900;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 16px;
+
+    background: #21966c;
+
+    color: #ffffff;
+
+    border: none;
 
     border-radius: 8px;
 
-    transition: 0.2s ease;
+    cursor: pointer;
+
+    font-size: 15px;
+
+    box-shadow: 0 3px 10px rgba(15, 118, 110, 0.25);
+
+    transition: background 0.2s ease;
 }
 
-
-.sidebar-menu a:hover {
-
-    background: rgba(20, 184, 166, 0.15);
-
-    color: #14b8a6;
-}
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-.sidebar-menu .logout {
-
-    margin-top: 10px;
-
-    color: #ffb4b4;
+.home-bar:hover {
+    background: #187a58;
 }
 
 
 /* =========================
-   OVERLAY
+   DARK OVERLAY
 ========================= */
 
 .sidebar-overlay {
 
     position: fixed;
 
-    inset: 0;
+    top: 0;
+    left: 0;
 
     width: 100%;
-    height: 100dvh;
+    height: 100%;
 
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(2, 77, 80, 0.55);
 
-    z-index: 999;
+    z-index: 1100;
 
-    opacity: 0;
-
-    visibility: hidden;
-
-    transition:
-        opacity 0.3s ease,
-        visibility 0.3s ease;
+    display: none;
 }
 
-
 .sidebar-overlay.active {
-
-    opacity: 1;
-
-    visibility: visible;
+    display: block;
 }
 
 
@@ -220,77 +222,37 @@
 @media (max-width: 600px) {
 
     .sidebar {
-
-        width: 82vw;
-
-        max-width: 320px;
+        width: min(280px, 82vw);
     }
-
 
     .sidebar-header {
+        height: 65px;
 
-        min-height: 80px;
-
-        padding: 16px;
+        padding: 0 16px;
     }
-
 
     .sidebar-header h2 {
-
-        font-size: 22px;
+        font-size: 18px;
     }
 
-
-    .sidebar-close {
-
-        width: 36px;
-        height: 36px;
-
-        font-size: 23px;
+    .close-btn {
+        font-size: 27px;
     }
-
 
     .sidebar-menu {
-
-        padding: 12px;
+        padding: 12px 8px;
     }
 
+    .sidebar-menu a,
+    .sidebar-footer a {
+        padding: 13px 14px;
 
-    .sidebar-menu a {
+        gap: 12px;
 
-        min-height: 52px;
-
-        padding: 12px 14px;
-
-        font-size: 17px;
-
-        gap: 13px;
-    }
-}
-
-
-/* =========================
-   SMALL PHONES
-========================= */
-
-@media (max-width: 380px) {
-
-    .sidebar {
-
-        width: 88vw;
+        font-size: 15px;
     }
 
-
-    .sidebar-header h2 {
-
-        font-size: 20px;
-    }
-
-
-    .sidebar-menu a {
-
-        font-size: 16px;
-
-        min-height: 50px;
+    .sidebar-footer {
+        padding: 12px 8px;
     }
 }
