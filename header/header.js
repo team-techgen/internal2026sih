@@ -11,7 +11,6 @@ fetch("../header/header.html")
 
         document.getElementById("header").innerHTML = data;
 
-        // Tell sidebar.js that header is ready
         document.dispatchEvent(
             new Event("headerLoaded")
         );

@@ -1,12 +1,6 @@
 /* =========================
-   GENERAL HEADER
+   HEADER
 ========================= */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 .site-header {
     width: 100%;
@@ -26,7 +20,6 @@
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
 
     gap: 20px;
 }
@@ -37,13 +30,14 @@
 ========================= */
 
 .menu-btn {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
     width: 42px;
     height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     border: none;
     border-radius: 7px;
@@ -54,8 +48,6 @@
     font-size: 25px;
 
     cursor: pointer;
-
-    transition: 0.2s ease;
 }
 
 .menu-btn:hover {
@@ -72,12 +64,16 @@
     display: flex;
     align-items: center;
 
+    flex: 0 0 auto;
+
     text-decoration: none;
 }
 
 .logo img {
     width: 48px;
     height: 48px;
+
+    display: block;
 
     object-fit: contain;
 }
@@ -91,9 +87,11 @@
     display: flex;
     align-items: center;
 
-    gap: 35px;
+    gap: 30px;
 
     margin-left: auto;
+
+    flex: 0 1 auto;
 }
 
 .nav-menu a {
@@ -102,6 +100,8 @@
     text-decoration: none;
 
     font-size: 17px;
+
+    white-space: nowrap;
 
     transition: 0.2s ease;
 }
@@ -119,9 +119,11 @@
     display: flex;
     align-items: center;
 
-    gap: 12px;
+    gap: 10px;
 
     margin-left: 20px;
+
+    flex: 0 0 auto;
 }
 
 .login-btn,
@@ -132,10 +134,15 @@
 
     font-size: 15px;
 
+    white-space: nowrap;
+
     cursor: pointer;
 
     transition: 0.2s ease;
 }
+
+
+/* LOGIN */
 
 .login-btn {
     background: transparent;
@@ -149,6 +156,9 @@
     border-color: #14b8a6;
     color: #14b8a6;
 }
+
+
+/* SIGN UP */
 
 .signup-btn {
     background: #14b8a6;
@@ -168,10 +178,11 @@
    TABLET
 ========================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
 
     .header-container {
         padding: 0 18px;
+        gap: 12px;
     }
 
     .nav-menu {
@@ -183,13 +194,13 @@
     }
 
     .header-actions {
-        gap: 8px;
         margin-left: 10px;
+        gap: 7px;
     }
 
     .login-btn,
     .signup-btn {
-        padding: 9px 13px;
+        padding: 9px 12px;
         font-size: 14px;
     }
 }
@@ -199,7 +210,7 @@
    MOBILE
 ========================= */
 
-@media (max-width: 650px) {
+@media (max-width: 750px) {
 
     .header-container {
         min-height: 65px;
@@ -209,26 +220,19 @@
         gap: 8px;
     }
 
-
-    /* Keep menu button visible */
-
     .menu-btn {
         width: 40px;
         height: 40px;
 
+        flex-basis: 40px;
+
         font-size: 23px;
-
-        flex-shrink: 0;
     }
-
-
-    /* Smaller logo */
 
     .logo img {
         width: 40px;
         height: 40px;
     }
-
 
     /* Hide desktop navigation */
 
@@ -236,29 +240,23 @@
         display: none;
     }
 
-
-    /* Keep actions compact */
-
     .header-actions {
         margin-left: auto;
 
         gap: 6px;
     }
 
-
     .login-btn,
     .signup-btn {
         padding: 8px 10px;
 
         font-size: 13px;
-
-        white-space: nowrap;
     }
 }
 
 
 /* =========================
-   VERY SMALL MOBILE
+   VERY SMALL PHONE
 ========================= */
 
 @media (max-width: 400px) {
