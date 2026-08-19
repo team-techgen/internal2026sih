@@ -6,12 +6,62 @@ fetch("../header/header.html")
         }
 
         return response.text();
+
     })
     .then(data => {
 
         document.getElementById("header").innerHTML = data;
 
-        // Tell sidebar.js that header is ready
+
+        /* =========================
+           MOBILE NAVIGATION
+        ========================= */
+
+        const navToggle =
+            document.getElementById("navToggle");
+
+        const headerNav =
+            document.getElementById("headerNav");
+
+
+        if (navToggle && headerNav) {
+
+            navToggle.addEventListener("click", function () {
+
+                headerNav.classList.toggle("mobile-open");
+
+
+                const isOpen =
+                    headerNav.classList.contains("mobile-open");
+
+
+                navToggle.setAttribute(
+                    "aria-expanded",
+                    isOpen
+                );
+
+
+                /* Change arrow */
+
+                if (isOpen) {
+
+                    navToggle.textContent = "▲";
+
+                } else {
+
+                    navToggle.textContent = "▼";
+
+                }
+
+            });
+
+        }
+
+
+        /* =========================
+           HEADER LOADED
+        ========================= */
+
         document.dispatchEvent(
             new Event("headerLoaded")
         );
@@ -19,6 +69,9 @@ fetch("../header/header.html")
     })
     .catch(error => {
 
-        console.error("Header Error:", error);
+        console.error(
+            "Header Error:",
+            error
+        );
 
     });
