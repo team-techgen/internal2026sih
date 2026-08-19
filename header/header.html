@@ -2,51 +2,50 @@
 
     <div class="header-container">
 
-        <!-- Menu / Mobile Dropdown Button -->
-        <button id="mobileMenuToggle"
-                class="mobile-menu-toggle"
-                type="button"
-                aria-label="Open navigation"
-                aria-expanded="false">
-            <span class="menu-icon">☰</span>
-            <span class="menu-text">Menu</span>
-            <span class="menu-arrow">⌄</span>
-        </button>
-
-
-        <!-- Sidebar Button -->
+        <!-- Sidebar Menu Button -->
         <button id="sidebarToggle"
                 class="menu-btn"
-                type="button"
-                aria-label="Open sidebar">
+                type="button">
             ☰
         </button>
 
 
         <!-- Logo -->
         <a href="../Home/index.html" class="logo">
+
             <img src="../Assets/logo.png"
                  alt="TechGenerate Logo">
+
         </a>
 
 
-        <!-- Desktop Navigation -->
+        <!-- Navigation -->
         <nav class="nav-menu">
 
-            <a href="../Home/index.html">Home</a>
+            <a href="../Home/index.html">
+                Home
+            </a>
 
-            <a href="#">Features</a>
+            <a href="#">
+                Features
+            </a>
 
-            <a href="#">Services</a>
+            <a href="#">
+                Services
+            </a>
 
-            <a href="#">About</a>
+            <a href="#">
+                About
+            </a>
 
-            <a href="#">Contact</a>
+            <a href="#">
+                Contact
+            </a>
 
         </nav>
 
 
-        <!-- Desktop Actions -->
+        <!-- Right Side -->
         <div class="header-actions">
 
             <button class="login-btn"
@@ -61,61 +60,45 @@
 
         </div>
 
+
+        <!-- Mobile Navigation Arrow -->
+        <button id="mobileNavToggle"
+                class="mobile-nav-toggle"
+                type="button"
+                aria-label="Show navigation"
+                aria-expanded="false">
+
+            <span>⌄</span>
+
+        </button>
+
     </div>
 
 
-    <!-- =========================
-         MOBILE DROPDOWN
-    ========================== -->
+    <!-- Mobile Hidden Navigation -->
 
-    <div id="mobileDropdown"
-         class="mobile-dropdown">
+    <div id="mobileNavDropdown"
+         class="mobile-nav-dropdown">
 
-        <nav class="mobile-nav">
+        <a href="../Home/index.html">
+            Home
+        </a>
 
-            <a href="../Home/index.html">
-                <span>Home</span>
-                <span>›</span>
-            </a>
+        <a href="#">
+            Features
+        </a>
 
-            <a href="#">
-                <span>Features</span>
-                <span>›</span>
-            </a>
+        <a href="#">
+            Services
+        </a>
 
-            <a href="#">
-                <span>Services</span>
-                <span>›</span>
-            </a>
+        <a href="#">
+            About
+        </a>
 
-            <a href="#">
-                <span>About</span>
-                <span>›</span>
-            </a>
-
-            <a href="#">
-                <span>Contact</span>
-                <span>›</span>
-            </a>
-
-        </nav>
-
-
-        <!-- Mobile Actions -->
-
-        <div class="mobile-actions">
-
-            <button class="mobile-login-btn"
-                    type="button">
-                Login
-            </button>
-
-            <button class="mobile-signup-btn"
-                    type="button">
-                Get Started
-            </button>
-
-        </div>
+        <a href="#">
+            Contact
+        </a>
 
     </div>
 

@@ -6,126 +6,80 @@ fetch("../header/header.html")
         }
 
         return response.text();
-    })
-    .then(data => {
-
-        document.getElementById("header").innerHTML = data;
-
-        document.dispatchEvent(
-            new Event("headerLoaded")
-        );
-
-    })
-    .catch(error => {
-
-        console.error("Header Error:", error);
-
-    });
-    fetch("../header/header.html")
-    .then(response => {
-
-        if (!response.ok) {
-            throw new Error("Header file not found");
-        }
-
-        return response.text();
 
     })
     .then(data => {
 
         document.getElementById("header").innerHTML = data;
 
-        /*
-         * Tell sidebar.js that header
-         * has finished loading
-         */
+
+        /* =========================
+           HEADER LOADED EVENT
+        ========================= */
+
         document.dispatchEvent(
             new Event("headerLoaded")
         );
 
 
         /* =========================
-           MOBILE DROPDOWN
-        ========================== */
+           MOBILE NAV DROPDOWN
+        ========================= */
 
-        const mobileMenuToggle =
-            document.getElementById("mobileMenuToggle");
+        const toggle =
+            document.getElementById("mobileNavToggle");
 
-        const mobileDropdown =
-            document.getElementById("mobileDropdown");
+        const dropdown =
+            document.getElementById("mobileNavDropdown");
 
 
-        if (mobileMenuToggle && mobileDropdown) {
+        if (toggle && dropdown) {
 
-            mobileMenuToggle.addEventListener(
+            toggle.addEventListener(
                 "click",
                 function () {
 
+                    dropdown.classList.toggle("active");
+
+                    toggle.classList.toggle("active");
+
+
                     const isOpen =
-                        mobileDropdown.classList.toggle("active");
+                        dropdown.classList.contains("active");
 
 
-                    mobileMenuToggle.setAttribute(
+                    toggle.setAttribute(
                         "aria-expanded",
                         isOpen
                     );
-
-
-                    /*
-                     * Rotate arrow
-                     */
-
-                    const arrow =
-                        mobileMenuToggle.querySelector(
-                            ".menu-arrow"
-                        );
-
-                    if (arrow) {
-
-                        arrow.style.transform =
-                            isOpen
-                                ? "rotate(180deg)"
-                                : "rotate(0deg)";
-                    }
 
                 }
             );
 
 
-            /*
-             * Close dropdown after
-             * selecting a link
-             */
+            /* Close when a link is clicked */
 
-            const mobileLinks =
-                mobileDropdown.querySelectorAll(
-                    ".mobile-nav a"
-                );
+            const links =
+                dropdown.querySelectorAll("a");
 
-            mobileLinks.forEach(link => {
+            links.forEach(link => {
 
                 link.addEventListener(
                     "click",
                     function () {
 
-                        mobileDropdown.classList.remove(
+                        dropdown.classList.remove(
                             "active"
                         );
 
-                        mobileMenuToggle.setAttribute(
+                        toggle.classList.remove(
+                            "active"
+                        );
+
+                        toggle.setAttribute(
                             "aria-expanded",
                             "false"
                         );
-
-                        const arrow =
-                            mobileMenuToggle.querySelector(
-                                ".menu-arrow"
-                            );
-
-                        if (arrow) {
-                            arrow.style.transform =
-                                "rotate(0deg)";
-                        }
 
                     }
                 );
