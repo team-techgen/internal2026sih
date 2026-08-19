@@ -11,16 +11,21 @@
 
     border-top: 1px solid #3b7775;
 
-    margin-top: 50px;
+    /* REMOVE EXTRA WHITE SPACE */
+    margin-top: 0;
+
+    flex-shrink: 0;
 }
 
 
 .footer-container {
+    width: 100%;
+
     max-width: 1200px;
 
     min-height: 80px;
 
-    margin: auto;
+    margin: 0 auto;
 
     padding: 20px 25px;
 
@@ -39,5 +44,26 @@
 
     font-size: 14px;
 
+    line-height: 1.5;
+
     color: #f4fffc;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .footer-container {
+        min-height: 70px;
+
+        padding: 18px 15px;
+    }
+
+    .footer-container p {
+        font-size: 13px;
+    }
+
 }

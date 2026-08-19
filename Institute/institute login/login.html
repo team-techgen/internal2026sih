@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Institute Login | Inclusive Queue</title>
+
+    <!-- Existing Header -->
+    <link rel="stylesheet" href="../../header/header.css">
+
+    <!-- Existing Sidebar -->
+    <link rel="stylesheet" href="../../sidebar/sidebar.css">
+
+    <!-- Login Page -->
+    <link rel="stylesheet" href="index.css">
+
+    <!-- Existing Footer -->
+    <link rel="stylesheet" href="../../footer/footer.css">
+
+</head>
+
+<body>
+
+    <!-- Existing Header -->
+    <script src="../../header/header.js"></script>
+
+    <!-- Existing Sidebar -->
+    <script src="../../sidebar/sidebar.js"></script>
+
+
+    <!-- LOGIN FORM -->
+
+    <main class="login-page">
+
+        <div class="login-card">
+
+            <div class="login-header">
+                <h1>Institute Login</h1>
+                <p>Login to access your institute account</p>
+            </div>
+
+
+            <form class="login-form">
+
+                <!-- Username / ID / Email -->
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username / Institute ID / Email
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter username, ID or email"
+                    >
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                    >
+
+                </div>
+
+
+                <!-- CAPTCHA -->
+
+                <div class="form-group">
+
+                    <label for="captcha">
+                        CAPTCHA
+                    </label>
+
+                    <div class="captcha-row">
+
+                        <div class="captcha-code">
+                            7K9P2
+                        </div>
+
+                        <button type="button" class="refresh-btn">
+                            ↻
+                        </button>
+
+                    </div>
+
+                    <input
+                        type="text"
+                        id="captcha"
+                        placeholder="Enter CAPTCHA"
+                    >
+
+                </div>
+
+
+                <!-- OTP -->
+
+                <div class="form-group">
+
+                    <label for="otp">
+                        OTP
+                    </label>
+
+                    <div class="otp-row">
+
+                        <input
+                            type="text"
+                            id="otp"
+                            placeholder="Enter 6-digit OTP"
+                            maxlength="6"
+                        >
+
+                        <button type="button" class="send-otp-btn">
+                            Send OTP
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LOGIN -->
+
+                <button type="submit" class="login-btn">
+                    Login
+                </button>
+
+            </form>
+
+
+            <div class="register-link">
+
+                <p>
+                    Don't have an institute account?
+
+                    <a href="../Ins Register/index.html">
+                        Register
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- Existing Footer -->
+    <script src="../../footer/footer.js"></script>
+
+</body>
+
+</html>

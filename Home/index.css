@@ -179,9 +179,19 @@ body {
 
     .hero {
 
+        /*
+         * Header = approximately 65px
+         * Footer = approximately 70px
+         *
+         * Prevent hero from pushing
+         * footer below the viewport.
+         */
+
         min-height: calc(
-            100dvh - 65px
+            100dvh - 135px
         );
+
+        flex: 1;
 
         padding: 30px 15px;
     }
@@ -196,8 +206,14 @@ body {
         );
 
         letter-spacing: -2px;
+
+        line-height: 1.1;
     }
 
+
+    /* =========================
+       TOP CIRCLE
+    ========================= */
 
     .hero::before {
 
@@ -209,6 +225,10 @@ body {
     }
 
 
+    /* =========================
+       BOTTOM CIRCLE
+    ========================= */
+
     .hero::after {
 
         width: 220px;
@@ -217,6 +237,7 @@ body {
         bottom: -100px;
         left: -90px;
     }
+
 }
 
 
@@ -229,7 +250,7 @@ body {
     .hero {
 
         min-height: calc(
-            100dvh - 65px
+            100dvh - 135px
         );
 
         padding: 25px 12px;
@@ -242,4 +263,5 @@ body {
 
         letter-spacing: -1px;
     }
+
 }
