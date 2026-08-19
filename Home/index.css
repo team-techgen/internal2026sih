@@ -1,3 +1,7 @@
+/* =========================
+   GENERAL
+========================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -18,6 +22,8 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 
     color: #102a2d;
+
+    overflow-x: hidden;
 }
 
 
@@ -26,17 +32,21 @@ body {
 ========================= */
 
 .hero {
+
     flex: 1;
 
     min-height: 500px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     position: relative;
 
     overflow: hidden;
+
+    padding: 40px 20px;
 
     background:
         radial-gradient(
@@ -59,10 +69,11 @@ body {
 
 
 /* =========================
-   DECORATIVE TOP CIRCLE
+   TOP CIRCLE
 ========================= */
 
 .hero::before {
+
     content: "";
 
     position: absolute;
@@ -82,10 +93,11 @@ body {
 
 
 /* =========================
-   DECORATIVE BOTTOM CIRCLE
+   BOTTOM CIRCLE
 ========================= */
 
 .hero::after {
+
     content: "";
 
     position: absolute;
@@ -105,17 +117,22 @@ body {
 
 
 /* =========================
-   HERO HEADING
+   HEADING
 ========================= */
 
 .hero h1 {
+
     position: relative;
 
     z-index: 1;
 
     margin: 0;
 
-    font-size: clamp(3rem, 8vw, 7rem);
+    font-size: clamp(
+        3rem,
+        8vw,
+        7rem
+    );
 
     font-weight: 700;
 
@@ -124,38 +141,105 @@ body {
     letter-spacing: -3px;
 
     text-align: center;
+
+    line-height: 1.1;
 }
 
 
 /* =========================
-   RESPONSIVE
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+
+    .hero {
+
+        min-height: 450px;
+
+        padding: 35px 20px;
+    }
+
+
+    .hero h1 {
+
+        font-size: clamp(
+            3rem,
+            10vw,
+            5.5rem
+        );
+    }
+}
+
+
+/* =========================
+   MOBILE
 ========================= */
 
 @media (max-width: 600px) {
 
     .hero {
-        min-height: 450px;
+
+        min-height: calc(
+            100dvh - 65px
+        );
+
+        padding: 30px 15px;
     }
 
+
     .hero h1 {
-        font-size: clamp(2.8rem, 14vw, 4.5rem);
+
+        font-size: clamp(
+            2.8rem,
+            16vw,
+            4.5rem
+        );
 
         letter-spacing: -2px;
     }
 
+
     .hero::before {
+
         width: 300px;
         height: 300px;
 
         top: -120px;
-        right: -100px;
+        right: -120px;
     }
 
+
     .hero::after {
+
         width: 220px;
         height: 220px;
 
         bottom: -100px;
-        left: -80px;
+        left: -90px;
+    }
+}
+
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media (max-width: 380px) {
+
+    .hero {
+
+        min-height: calc(
+            100dvh - 65px
+        );
+
+        padding: 25px 12px;
+    }
+
+
+    .hero h1 {
+
+        font-size: 15vw;
+
+        letter-spacing: -1px;
     }
 }
