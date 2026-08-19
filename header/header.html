@@ -2,50 +2,51 @@
 
     <div class="header-container">
 
-        <!-- Sidebar Menu Button -->
+        <!-- Menu / Mobile Dropdown Button -->
+        <button id="mobileMenuToggle"
+                class="mobile-menu-toggle"
+                type="button"
+                aria-label="Open navigation"
+                aria-expanded="false">
+            <span class="menu-icon">☰</span>
+            <span class="menu-text">Menu</span>
+            <span class="menu-arrow">⌄</span>
+        </button>
+
+
+        <!-- Sidebar Button -->
         <button id="sidebarToggle"
                 class="menu-btn"
-                type="button">
+                type="button"
+                aria-label="Open sidebar">
             ☰
         </button>
 
 
         <!-- Logo -->
         <a href="../Home/index.html" class="logo">
-
             <img src="../Assets/logo.png"
                  alt="TechGenerate Logo">
-
         </a>
 
 
-        <!-- Navigation -->
+        <!-- Desktop Navigation -->
         <nav class="nav-menu">
 
-            <a href="../Home/index.html">
-                Home
-            </a>
+            <a href="../Home/index.html">Home</a>
 
-            <a href="#">
-                Features
-            </a>
+            <a href="#">Features</a>
 
-            <a href="#">
-                Services
-            </a>
+            <a href="#">Services</a>
 
-            <a href="#">
-                About
-            </a>
+            <a href="#">About</a>
 
-            <a href="#">
-                Contact
-            </a>
+            <a href="#">Contact</a>
 
         </nav>
 
 
-        <!-- Right Side -->
+        <!-- Desktop Actions -->
         <div class="header-actions">
 
             <button class="login-btn"
@@ -54,6 +55,62 @@
             </button>
 
             <button class="signup-btn"
+                    type="button">
+                Get Started
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MOBILE DROPDOWN
+    ========================== -->
+
+    <div id="mobileDropdown"
+         class="mobile-dropdown">
+
+        <nav class="mobile-nav">
+
+            <a href="../Home/index.html">
+                <span>Home</span>
+                <span>›</span>
+            </a>
+
+            <a href="#">
+                <span>Features</span>
+                <span>›</span>
+            </a>
+
+            <a href="#">
+                <span>Services</span>
+                <span>›</span>
+            </a>
+
+            <a href="#">
+                <span>About</span>
+                <span>›</span>
+            </a>
+
+            <a href="#">
+                <span>Contact</span>
+                <span>›</span>
+            </a>
+
+        </nav>
+
+
+        <!-- Mobile Actions -->
+
+        <div class="mobile-actions">
+
+            <button class="mobile-login-btn"
+                    type="button">
+                Login
+            </button>
+
+            <button class="mobile-signup-btn"
                     type="button">
                 Get Started
             </button>
