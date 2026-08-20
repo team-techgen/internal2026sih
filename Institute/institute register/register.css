@@ -1004,3 +1004,255 @@ body::after {
     }
 
 }
+/* =========================
+   OTP SECTION
+========================= */
+
+.otp-section {
+    margin-top: 15px;
+}
+
+.otp-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.otp-section input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    font-size: 16px;
+    letter-spacing: 4px;
+}
+
+.otp-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 12px;
+}
+
+#otpTimer {
+    font-size: 14px;
+    color: #666;
+}
+
+#resendOtpBtn {
+    border: none;
+    background: #024d50;
+    color: white;
+    padding: 9px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#resendOtpBtn:disabled {
+    background: #aaa;
+    color: #eee;
+    cursor: not-allowed;
+}
+
+#resendOtpBtn:not(:disabled):hover {
+    background: #03676a;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .otp-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #resendOtpBtn {
+        width: 100%;
+    }
+}
+
+/* =========================
+   EMAIL OTP
+========================= */
+
+.otp-send-btn {
+    margin-top: 10px;
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: #024d50;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.otp-send-btn:hover {
+    background: #03676a;
+}
+
+
+.otp-send-btn:disabled {
+    background: #999999;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   OTP SECTION
+========================= */
+
+.otp-section {
+    margin-top: 10px;
+}
+
+
+.otp-section label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-weight: 600;
+}
+
+
+.otp-section input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #cccccc;
+
+    border-radius: 6px;
+
+    font-size: 17px;
+
+    letter-spacing: 5px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+
+.otp-section input:focus {
+    border-color: #024d50;
+
+    box-shadow:
+        0 0 0 2px rgba(
+            2,
+            77,
+            80,
+            0.12
+        );
+}
+
+
+.otp-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 12px;
+}
+
+
+#otpTimer {
+    font-size: 14px;
+
+    color: #666666;
+}
+
+
+#resendOtpBtn {
+    border: none;
+
+    border-radius: 6px;
+
+    padding: 9px 16px;
+
+    background: #024d50;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+
+#resendOtpBtn:hover {
+    background: #03676a;
+}
+
+
+#resendOtpBtn:disabled {
+    background: #aaaaaa;
+
+    color: #eeeeee;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   VALID OTP
+========================= */
+
+.input-valid {
+    border-color: #16834b !important;
+
+    box-shadow:
+        0 0 0 2px rgba(
+            22,
+            131,
+            75,
+            0.12
+        );
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .otp-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 10px;
+    }
+
+
+    #resendOtpBtn {
+        width: 100%;
+    }
+
+
+    .otp-send-btn {
+        width: 100%;
+    }
+
+}

@@ -5,8 +5,9 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Institute Registration | Inclusive Queue</title>
 
@@ -15,32 +16,36 @@
          HEADER CSS
     ========================== -->
 
-    <link rel="stylesheet"
-          href="../../header/header.css">
+    <link
+        rel="stylesheet"
+        href="../../header/header.css">
 
 
     <!-- =========================
          SIDEBAR CSS
     ========================== -->
 
-    <link rel="stylesheet"
-          href="../../sidebar/sidebar.css">
+    <link
+        rel="stylesheet"
+        href="../../sidebar/sidebar.css">
 
 
     <!-- =========================
          REGISTER CSS
     ========================== -->
 
-    <link rel="stylesheet"
-          href="register.css">
+    <link
+        rel="stylesheet"
+        href="register.css">
 
 
     <!-- =========================
          FOOTER CSS
     ========================== -->
 
-    <link rel="stylesheet"
-          href="../../footer/footer.css">
+    <link
+        rel="stylesheet"
+        href="../../footer/footer.css">
 
 </head>
 
@@ -91,12 +96,12 @@
         </section>
 
 
+
         <!-- =========================
              REGISTRATION CARD
         ========================== -->
 
         <section class="register-card">
-
 
             <form
                 id="registerForm"
@@ -318,38 +323,26 @@
                             required>
 
                         <small
-                            id="instituteEmailError"
+                            id="emailError"
                             class="input-error">
                         </small>
 
-                    </div>
 
+                        <!-- SEND OTP -->
 
-                    <!-- MOBILE -->
+                        <button
+                            type="button"
+                            id="sendEmailOtp"
+                            class="otp-send-btn">
 
-                    <div class="form-group">
+                            Send Email OTP
 
-                        <label for="instituteMobile">
-                            Institute Mobile Number
-                            <em>(Optional)</em>
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="instituteMobile"
-                            name="instituteMobile"
-                            placeholder="Enter 10-digit mobile number"
-                            maxlength="10"
-                            inputmode="numeric">
-
-                        <small
-                            id="instituteMobileError"
-                            class="input-error">
-                        </small>
+                        </button>
 
                     </div>
 
                 </div>
+
 
 
                 <!-- =========================
@@ -384,8 +377,11 @@
                     <div class="form-group">
 
                         <label for="headName">
+
                             Head / Authorized Person Name
+
                             <span>*</span>
+
                         </label>
 
                         <input
@@ -408,9 +404,15 @@
                     <div class="form-group">
 
                         <label for="approvalDocument">
+
                             Approval / Authorization Document
-                            <span>*</span>
+
+                            <em>
+                                (Optional)
+                            </em>
+
                         </label>
+
 
                         <div class="file-upload">
 
@@ -418,8 +420,8 @@
                                 type="file"
                                 id="approvalDocument"
                                 name="approvalDocument"
-                                accept=".pdf,.jpg,.jpeg,.png"
-                                required>
+                                accept=".pdf,.jpg,.jpeg,.png">
+
 
                             <label
                                 for="approvalDocument"
@@ -437,10 +439,14 @@
 
                         </div>
 
+
                         <small class="file-help">
+
                             Upload PDF, JPG or PNG issued by the
                             institute head / authorized authority.
+
                         </small>
+
 
                         <small
                             id="approvalDocumentError"
@@ -450,6 +456,7 @@
                     </div>
 
                 </div>
+
 
 
                 <!-- =========================
@@ -471,7 +478,7 @@
                             </h2>
 
                             <p>
-                                Verify your institute contact information.
+                                Verify your institute email address.
                             </p>
 
                         </div>
@@ -479,85 +486,60 @@
                     </div>
 
 
+
                     <!-- EMAIL OTP -->
 
-                    <div class="form-group">
+                    <div
+                        class="otp-section"
+                        id="otpSection">
 
                         <label for="emailOtp">
-                            Email OTP
+
+                            Enter Email OTP
+
                             <span>*</span>
+
                         </label>
 
-                        <div class="otp-action-row">
 
-                            <input
-                                type="text"
-                                id="emailOtp"
-                                name="emailOtp"
-                                maxlength="6"
-                                inputmode="numeric"
-                                placeholder="Enter 6-digit email OTP">
+                        <input
+                            type="text"
+                            id="emailOtp"
+                            name="emailOtp"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            placeholder="Enter 6-digit OTP">
 
-                            <button
-                                type="button"
-                                class="secondary-btn"
-                                id="sendEmailOtp">
-
-                                Send OTP
-
-                            </button>
-
-                        </div>
 
                         <small
                             id="emailOtpError"
                             class="input-error">
                         </small>
 
-                    </div>
 
+                        <div class="otp-actions">
 
-                    <!-- MOBILE OTP -->
+                            <span id="otpTimer">
 
-                    <div class="form-group">
+                                Send OTP to start verification
 
-                        <label for="mobileOtp">
+                            </span>
 
-                            Mobile OTP
-
-                            <em>
-                                (Only if mobile number is provided)
-                            </em>
-
-                        </label>
-
-                        <div class="otp-action-row">
-
-                            <input
-                                type="text"
-                                id="mobileOtp"
-                                name="mobileOtp"
-                                maxlength="6"
-                                inputmode="numeric"
-                                placeholder="Enter 6-digit mobile OTP">
 
                             <button
                                 type="button"
-                                class="secondary-btn"
-                                id="sendMobileOtp">
+                                id="resendOtpBtn"
+                                disabled>
 
-                                Send OTP
+                                Resend OTP
 
                             </button>
 
                         </div>
 
-                        <small
-                            id="mobileOtpError"
-                            class="input-error">
-                        </small>
-
                     </div>
+
 
 
                     <!-- CAPTCHA -->
@@ -565,9 +547,13 @@
                     <div class="form-group">
 
                         <label for="captchaInput">
+
                             CAPTCHA
+
                             <span>*</span>
+
                         </label>
+
 
                         <div class="captcha-row">
 
@@ -575,6 +561,7 @@
                                 id="captchaCode"
                                 class="captcha-code">
                             </div>
+
 
                             <button
                                 type="button"
@@ -588,7 +575,8 @@
 
                         </div>
 
-                       <input
+
+                        <input
                             type="text"
                             id="captchaInput"
                             name="captcha"
@@ -598,12 +586,14 @@
                             spellcheck="false"
                             required>
 
+
                         <small
                             id="captchaError"
                             class="input-error">
                         </small>
 
                     </div>
+
 
 
                     <!-- TERMS -->
@@ -619,12 +609,15 @@
                                 required>
 
                             <span>
+
                                 I confirm that the information provided
                                 is accurate and that I am authorized to
                                 register this institute.
+
                             </span>
 
                         </label>
+
 
                         <small
                             id="termsError"
@@ -632,6 +625,7 @@
                         </small>
 
                     </div>
+
 
 
                     <!-- SUBMIT -->
@@ -647,9 +641,7 @@
                 </div>
 
 
-                <!-- =========================
-                     LOGIN
-                ========================== -->
+                <!-- LOGIN -->
 
                 <div class="login-redirect">
 
@@ -657,8 +649,12 @@
                         Already have an account?
                     </span>
 
-                    <a href="../institute login/login.html">
+                    <a
+                        href="../institute login/login.html"
+                        id="loginLink">
+
                         Login
+
                     </a>
 
                 </div>
@@ -671,6 +667,7 @@
     </main>
 
 
+
     <!-- =========================
          FOOTER
     ========================== -->
@@ -678,19 +675,39 @@
     <div id="footer"></div>
 
 
+
     <!-- =========================
          JAVASCRIPT
     ========================== -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="../../supabase/supabase-config.js"></script>
-    <script src="../../header/header.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
 
-    <script src="../../sidebar/sidebar.js"></script>
 
-    <script src="../../footer/footer.js"></script>
+    <script
+        src="../../supabase/supabase-config.js">
+    </script>
 
-    <script src="register.js"></script>
+
+    <script
+        src="../../header/header.js">
+    </script>
+
+
+    <script
+        src="../../sidebar/sidebar.js">
+    </script>
+
+
+    <script
+        src="../../footer/footer.js">
+    </script>
+
+
+    <script
+        src="register.js">
+    </script>
 
 
 </body>
