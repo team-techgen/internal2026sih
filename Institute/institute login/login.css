@@ -14,23 +14,30 @@
 ========================= */
 
 body {
+
     min-height: 100vh;
 
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
     color: #163e40;
 
     background:
+
         radial-gradient(
             circle at 85% 15%,
             rgba(33, 150, 108, 0.14),
             transparent 32%
         ),
+
         radial-gradient(
             circle at 10% 90%,
             rgba(20, 184, 166, 0.10),
             transparent 32%
         ),
+
         linear-gradient(
             135deg,
             #eef8f5 0%,
@@ -45,7 +52,9 @@ body {
 ========================= */
 
 .login-page {
-    min-height: calc(100vh - 165px);
+
+    min-height:
+        calc(100vh - 165px);
 
     display: flex;
 
@@ -62,7 +71,9 @@ body {
 ========================= */
 
 .login-card {
+
     width: 100%;
+
     max-width: 460px;
 
     padding: 40px;
@@ -74,7 +85,8 @@ body {
     border-radius: 18px;
 
     box-shadow:
-        0 15px 40px rgba(2, 77, 80, 0.12);
+        0 15px 40px
+        rgba(2, 77, 80, 0.12);
 }
 
 
@@ -83,12 +95,15 @@ body {
 ========================= */
 
 .login-header {
+
     text-align: center;
 
     margin-bottom: 30px;
 }
 
+
 .login-header h1 {
+
     color: #024d50;
 
     font-size: 30px;
@@ -96,7 +111,9 @@ body {
     margin-bottom: 10px;
 }
 
+
 .login-header p {
+
     color: #607a78;
 
     font-size: 14px;
@@ -110,10 +127,13 @@ body {
 ========================= */
 
 .form-group {
+
     margin-bottom: 20px;
 }
 
+
 .form-group label {
+
     display: block;
 
     margin-bottom: 8px;
@@ -130,7 +150,8 @@ body {
    INPUTS
 ========================= */
 
-.form-group input {
+.form-group > input {
+
     width: 100%;
 
     padding: 12px 14px;
@@ -147,18 +168,67 @@ body {
 
     font-size: 14px;
 
-    transition: 0.2s;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.form-group input:focus {
+
+.form-group > input:focus {
+
     border-color: #21966c;
 
     box-shadow:
-        0 0 0 3px rgba(33, 150, 108, 0.12);
+        0 0 0 3px
+        rgba(33, 150, 108, 0.12);
 }
 
-.form-group input::placeholder {
+
+.form-group > input::placeholder {
+
     color: #91aaa7;
+}
+
+
+/* =========================
+   ERROR INPUT
+========================= */
+
+.form-group > input.input-invalid {
+
+    border-color: #dc3545;
+
+    background: #fffafa;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(220, 53, 69, 0.08);
+}
+
+
+.form-group > input.input-valid {
+
+    border-color: #21966c;
+}
+
+
+/* =========================
+   ERROR MESSAGE
+========================= */
+
+.input-error {
+
+    display: block;
+
+    min-height: 18px;
+
+    margin-top: 5px;
+
+    color: #dc3545;
+
+    font-size: 12px;
+
+    line-height: 1.4;
 }
 
 
@@ -167,6 +237,7 @@ body {
 ========================= */
 
 .captcha-row {
+
     display: flex;
 
     align-items: center;
@@ -176,14 +247,29 @@ body {
     margin-bottom: 10px;
 }
 
+
 .captcha-code {
+
     flex: 1;
 
-    padding: 11px;
+    min-height: 44px;
 
-    text-align: center;
+    display: flex;
 
-    background: #ddf4ec;
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 8px 12px;
+
+    background:
+        repeating-linear-gradient(
+            135deg,
+            #ddf4ec,
+            #ddf4ec 5px,
+            #e8f8f3 5px,
+            #e8f8f3 10px
+        );
 
     border: 1px solid #b8d5cf;
 
@@ -193,14 +279,31 @@ body {
 
     font-size: 18px;
 
-    font-weight: bold;
+    font-weight: 700;
 
     letter-spacing: 5px;
+
+    user-select: none;
+
+    pointer-events: none;
 }
 
+
+/* =========================
+   CAPTCHA REFRESH
+========================= */
+
 .refresh-btn {
-    width: 42px;
-    height: 42px;
+
+    width: 44px;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     border: 1px solid #b8d5cf;
 
@@ -210,15 +313,21 @@ body {
 
     color: #21966c;
 
-    font-size: 20px;
+    font-size: 21px;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
+
 .refresh-btn:hover {
+
     background: #ddf4ec;
+
+    transform: rotate(20deg);
 }
 
 
@@ -227,17 +336,76 @@ body {
 ========================= */
 
 .otp-row {
+
     display: flex;
 
-    gap: 10px;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-bottom: 6px;
 }
 
-.otp-row input {
-    flex: 1;
+
+.otp-box {
+
+    width: 48px;
+
+    height: 50px;
+
+    padding: 0;
+
+    border: 1px solid #b8d5cf;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #163e40;
+
+    text-align: center;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
+
+.otp-box:focus {
+
+    border-color: #21966c;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(33, 150, 108, 0.12);
+}
+
+
+.otp-box.input-invalid {
+
+    border-color: #dc3545;
+
+    background: #fffafa;
+}
+
+
+/* =========================
+   SEND OTP
+========================= */
 
 .send-otp-btn {
-    padding: 0 15px;
+
+    width: 100%;
+
+    margin-top: 8px;
+
+    padding: 10px;
 
     border: none;
 
@@ -251,15 +419,54 @@ body {
 
     font-weight: 600;
 
-    white-space: nowrap;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.send-otp-btn:hover {
+
+    background: #c8ecdf;
+}
+
+
+/* =========================
+   FORGOT CREDENTIAL
+========================= */
+
+.forgot-btn {
+
+    display: block;
+
+    width: 100%;
+
+    margin-top: 4px;
+
+    padding: 8px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #21966c;
+
+    font-size: 13px;
+
+    font-weight: 600;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    text-align: right;
 }
 
-.send-otp-btn:hover {
-    background: #c8ecdf;
+
+.forgot-btn:hover {
+
+    color: #187a58;
+
+    text-decoration: underline;
 }
 
 
@@ -268,11 +475,12 @@ body {
 ========================= */
 
 .login-btn {
+
     width: 100%;
 
     padding: 13px;
 
-    margin-top: 5px;
+    margin-top: 8px;
 
     border: none;
 
@@ -288,40 +496,78 @@ body {
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        background 0.2s ease;
 }
 
+
 .login-btn:hover {
+
     background: #187a58;
 }
 
 
 /* =========================
-   REGISTER LINK
+   REGISTER SECTION
 ========================= */
 
-.register-link {
+.register-section {
+
     margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #e1eeeb;
 
     text-align: center;
 }
 
-.register-link p {
+
+.register-section p {
+
+    margin-bottom: 10px;
+
     color: #607a78;
 
     font-size: 14px;
 }
 
-.register-link a {
+
+/* =========================
+   REGISTER BUTTON
+========================= */
+
+.register-btn {
+
+    min-width: 120px;
+
+    padding: 10px 20px;
+
+    border: 1px solid #21966c;
+
+    border-radius: 8px;
+
+    background: transparent;
+
     color: #21966c;
+
+    font-size: 14px;
 
     font-weight: 600;
 
-    text-decoration: none;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
-.register-link a:hover {
-    text-decoration: underline;
+
+.register-btn:hover {
+
+    background: #21966c;
+
+    color: #ffffff;
 }
 
 
@@ -332,22 +578,70 @@ body {
 @media (max-width: 500px) {
 
     .login-page {
+
         padding: 35px 15px;
     }
 
+
     .login-card {
+
         padding: 28px 22px;
+
+        border-radius: 14px;
     }
 
+
     .login-header h1 {
+
         font-size: 26px;
     }
 
+
     .otp-row {
-        flex-direction: column;
+
+        gap: 6px;
     }
 
-    .send-otp-btn {
-        padding: 11px;
+
+    .otp-box {
+
+        width: 42px;
+
+        height: 46px;
+
+        font-size: 18px;
     }
+
+}
+
+
+@media (max-width: 360px) {
+
+    .login-card {
+
+        padding: 25px 16px;
+    }
+
+
+    .otp-row {
+
+        gap: 4px;
+    }
+
+
+    .otp-box {
+
+        width: 39px;
+
+        height: 44px;
+    }
+
+
+    .captcha-code {
+
+        font-size: 16px;
+
+        letter-spacing: 3px;
+    }
+
 }

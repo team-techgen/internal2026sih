@@ -10,44 +10,86 @@
 
     <title>Institute Login | Inclusive Queue</title>
 
-    <!-- Existing Header -->
-    <link rel="stylesheet" href="../../header/header.css">
 
-    <!-- Existing Sidebar -->
-    <link rel="stylesheet" href="../../sidebar/sidebar.css">
+    <!-- =========================
+         HEADER CSS
+    ========================== -->
 
-    <!-- Login Page -->
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet"
+          href="../../header/header.css">
 
-    <!-- Existing Footer -->
-    <link rel="stylesheet" href="../../footer/footer.css">
+
+    <!-- =========================
+         SIDEBAR CSS
+    ========================== -->
+
+    <link rel="stylesheet"
+          href="../../sidebar/sidebar.css">
+
+
+    <!-- =========================
+         LOGIN CSS
+    ========================== -->
+
+    <link rel="stylesheet"
+          href="login.css">
+
+
+    <!-- =========================
+         FOOTER CSS
+    ========================== -->
+
+    <link rel="stylesheet"
+          href="../../footer/footer.css">
 
 </head>
 
+
 <body>
 
-    <!-- Existing Header -->
-    <script src="../../header/header.js"></script>
 
-    <!-- Existing Sidebar -->
-    <script src="../../sidebar/sidebar.js"></script>
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div id="header"></div>
 
 
-    <!-- LOGIN FORM -->
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <div id="sidebar"></div>
+
+
+    <!-- =========================
+         LOGIN
+    ========================== -->
 
     <main class="login-page">
 
         <div class="login-card">
 
             <div class="login-header">
-                <h1>Institute Login</h1>
-                <p>Login to access your institute account</p>
+
+                <h1>
+                    Institute Login
+                </h1>
+
+                <p>
+                    Login to access your institute account
+                </p>
+
             </div>
 
 
-            <form class="login-form">
+            <form
+                class="login-form"
+                id="loginForm"
+                novalidate>
 
-                <!-- Username / ID / Email -->
+
+                <!-- USERNAME -->
 
                 <div class="form-group">
 
@@ -58,13 +100,19 @@
                     <input
                         type="text"
                         id="username"
+                        name="username"
                         placeholder="Enter username, ID or email"
-                    >
+                        autocomplete="username">
+
+                    <small
+                        class="input-error"
+                        id="usernameError">
+                    </small>
 
                 </div>
 
 
-                <!-- Password -->
+                <!-- PASSWORD -->
 
                 <div class="form-group">
 
@@ -75,8 +123,14 @@
                     <input
                         type="password"
                         id="password"
+                        name="password"
                         placeholder="Enter your password"
-                    >
+                        autocomplete="current-password">
+
+                    <small
+                        class="input-error"
+                        id="passwordError">
+                    </small>
 
                 </div>
 
@@ -85,27 +139,41 @@
 
                 <div class="form-group">
 
-                    <label for="captcha">
+                    <label for="captchaInput">
                         CAPTCHA
                     </label>
 
                     <div class="captcha-row">
 
-                        <div class="captcha-code">
-                            7K9P2
+                        <div
+                            id="captchaCode"
+                            class="captcha-code">
                         </div>
 
-                        <button type="button" class="refresh-btn">
+                        <button
+                            type="button"
+                            id="refreshCaptcha"
+                            class="refresh-btn"
+                            aria-label="Generate new CAPTCHA">
+
                             ↻
+
                         </button>
 
                     </div>
 
                     <input
                         type="text"
-                        id="captcha"
+                        id="captchaInput"
+                        name="captcha"
                         placeholder="Enter CAPTCHA"
-                    >
+                        autocomplete="off"
+                        spellcheck="false">
+
+                    <small
+                        class="input-error"
+                        id="captchaError">
+                    </small>
 
                 </div>
 
@@ -114,46 +182,117 @@
 
                 <div class="form-group">
 
-                    <label for="otp">
+                    <label>
                         OTP
                     </label>
 
-                    <div class="otp-row">
+                    <div
+                        class="otp-row"
+                        id="otpContainer">
 
                         <input
                             type="text"
-                            id="otp"
-                            placeholder="Enter 6-digit OTP"
-                            maxlength="6"
-                        >
+                            class="otp-box"
+                            maxlength="1"
+                            inputmode="numeric"
+                            aria-label="OTP digit 1">
 
-                        <button type="button" class="send-otp-btn">
-                            Send OTP
-                        </button>
+                        <input
+                            type="text"
+                            class="otp-box"
+                            maxlength="1"
+                            inputmode="numeric"
+                            aria-label="OTP digit 2">
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            maxlength="1"
+                            inputmode="numeric"
+                            aria-label="OTP digit 3">
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            maxlength="1"
+                            inputmode="numeric"
+                            aria-label="OTP digit 4">
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            maxlength="1"
+                            inputmode="numeric"
+                            aria-label="OTP digit 5">
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            maxlength="1"
+                            inputmode="numeric"
+                            aria-label="OTP digit 6">
 
                     </div>
+
+                    <small
+                        class="input-error"
+                        id="otpError">
+                    </small>
+
+
+                    <button
+                        type="button"
+                        class="send-otp-btn"
+                        id="sendOtpBtn">
+
+                        Send OTP
+
+                    </button>
 
                 </div>
 
 
+                <!-- FORGOT CREDENTIAL -->
+
+                <button
+                    type="button"
+                    class="forgot-btn"
+                    id="forgotCredentialBtn">
+
+                    Forgot credentials?
+
+                </button>
+
+
                 <!-- LOGIN -->
 
-                <button type="submit" class="login-btn">
+                <button
+                    type="submit"
+                    class="login-btn">
+
                     Login
+
                 </button>
 
             </form>
 
 
-            <div class="register-link">
+            <!-- REGISTER -->
+
+            <div class="register-section">
 
                 <p>
                     Don't have an institute account?
-
-                    <a href="../Ins Register/index.html">
-                        Register
-                    </a>
                 </p>
+
+                <button
+                    type="button"
+                    class="register-btn"
+                    id="registerBtn">
+
+                    Register
+
+                </button>
 
             </div>
 
@@ -162,8 +301,29 @@
     </main>
 
 
-    <!-- Existing Footer -->
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <div id="footer"></div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <!-- Header -->
+    <script src="../../header/header.js"></script>
+
+    <!-- Sidebar -->
+    <script src="../../sidebar/sidebar.js"></script>
+
+    <!-- Footer -->
     <script src="../../footer/footer.js"></script>
+
+    <!-- Login -->
+    <script src="login.js"></script>
+
 
 </body>
 
