@@ -197,45 +197,63 @@ if (
 
 
     /* =========================
-       LOGIN / REGISTER
-       CURRENTLY NON-FUNCTIONAL
-    ========================= */
+   LOGIN / REGISTER ACTIONS
+========================= */
 
-    const actionButtons =
-        getStartedMenu.querySelectorAll(
-            ".role-submenu button"
-        );
-
-
-    actionButtons.forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function (event) {
-
-                event.stopPropagation();
+const actionButtons =
+    getStartedMenu.querySelectorAll(
+        ".role-submenu button"
+    );
 
 
-                const role =
-                    button
-                        .closest(".role-dropdown")
-                        .querySelector(".role-btn span")
-                        .textContent
-                        .trim();
+actionButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
 
 
-                const action =
-                    button.textContent.trim();
+            /* Get selected role */
+
+            const role =
+                button
+                    .closest(".role-dropdown")
+                    .querySelector(".role-btn span")
+                    .textContent
+                    .trim();
 
 
-                console.log(
-                    role + " - " + action
-                );
+            /* Get selected action */
+
+            const action =
+                button.textContent.trim();
+
+
+            console.log(
+                role + " - " + action
+            );
+
+
+            /* =========================
+               INSTITUTE LOGIN
+            ========================= */
+
+            if (
+                role === "INSTITUTE" &&
+                action === "Login"
+            ) {
+
+                window.location.href =
+                    "../Institute/institute%20login/login.html";
 
             }
-        );
 
-    });
+        }
+    );
+
+});
 
 
     /* =========================
