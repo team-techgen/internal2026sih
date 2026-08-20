@@ -4,6 +4,25 @@
 
 
 /* =========================
+   SUPABASE CHECK
+========================= */
+
+console.log(
+    "Supabase client:",
+    supabaseClient
+);
+
+
+if (!supabaseClient) {
+
+    console.error(
+        "❌ Supabase client is not available."
+    );
+
+}
+
+
+/* =========================
    ERROR FUNCTIONS
 ========================= */
 
@@ -135,21 +154,21 @@ function generateCaptcha() {
     let newCaptcha = "";
 
 
-    /*
-       Generate a new 6-character CAPTCHA.
-
-       Allowed:
-       A-Z selected characters
-       a-z selected characters
-       0-9
-       @
-       #
-    */
-
     do {
 
         newCaptcha = "";
 
+
+        /*
+           Generate 6 characters
+
+           Allowed:
+           Selected uppercase letters
+           Selected lowercase letters
+           0-9
+           @
+           #
+        */
 
         for (let i = 0; i < 6; i++) {
 
@@ -512,7 +531,7 @@ if (registerForm) {
 
     registerForm.addEventListener(
         "submit",
-        function (event) {
+        async function (event) {
 
             event.preventDefault();
 
@@ -727,7 +746,7 @@ if (registerForm) {
 
 
             /* =====================
-               AUTHORIZATION
+               AUTHORIZATION DOCUMENT
             ===================== */
 
             const authorizationDocument =
@@ -803,8 +822,7 @@ if (registerForm) {
 
             /*
                Mobile OTP is required
-               only when mobile number
-               is provided.
+               only when mobile is provided.
             */
 
             if (instituteMobile) {
@@ -883,7 +901,7 @@ if (registerForm) {
 
 
             /* =====================
-               FINAL RESULT
+               STOP IF INVALID
             ===================== */
 
             if (!isValid) {
@@ -893,14 +911,224 @@ if (registerForm) {
             }
 
 
-            /*
-               Registration backend will
-               be connected later.
-            */
+            /* =========================
+               SUPABASE CHECK
+            ========================= */
 
-            alert(
-                "Registration functionality will be connected later."
-            );
+            if (!supabaseClient) {
+
+                alert(
+                    "Supabase is not initialized. Please check your Supabase configuration."
+                );
+
+                console.error(
+                    "❌ supabaseClient is undefined."
+                );
+
+                return;
+
+            }
+
+
+            /* =========================
+               DISABLE SUBMIT BUTTON
+            ========================= */
+
+            const submitButton =
+                registerForm.querySelector(
+                    'button[type="submit"]'
+                );
+
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.textContent =
+                    "Submitting...";
+
+            }
+
+
+            try {
+
+                /* =========================
+                   DATABASE INSERT
+                ========================= */
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient
+                        .from("institutes")
+                        .insert([
+                            {
+                                user_id:
+                                    userId,
+
+                                institute_type:
+                                    instituteType,
+
+                                institute_name:
+                                    instituteName,
+
+                                institute_address:
+                                    instituteAddress,
+
+                                institute_email:
+                                    instituteEmail,
+
+                                institute_mobile:
+                                    instituteMobile ||
+                                    null,
+
+                                /*
+                                   File upload will be
+                                   connected to Supabase
+                                   Storage next.
+
+                                   Therefore this remains
+                                   NULL for now.
+                                */
+
+                                authorization_document_path:
+                                    null,
+
+                                /*
+                                   Supabase table already
+                                   has default:
+                                   status = 'pending'
+                                */
+
+                            }
+                        ])
+                        .select();
+
+
+                /* =========================
+                   DATABASE ERROR
+                ========================= */
+
+                if (error) {
+
+                    console.error(
+                        "❌ Supabase insert error:",
+                        error
+                    );
+
+
+                    /*
+                       Duplicate User ID
+                    */
+
+                    if (
+                        error.code ===
+                        "23505"
+                    ) {
+
+                        showError(
+                            "userId",
+                            "userIdError",
+                            "This User ID already exists. Please choose another."
+                        );
+
+                        document.getElementById(
+                            "userId"
+                        ).focus();
+
+                    } else {
+
+                        alert(
+                            "Registration failed.\n\n" +
+                            error.message
+                        );
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                /* =========================
+                   SUCCESS
+                ========================= */
+
+                console.log(
+                    "✅ Institute registered:",
+                    data
+                );
+
+
+                alert(
+                    "Institute registration request submitted successfully.\n\n" +
+                    "Your request is currently pending approval."
+                );
+
+
+                /* =========================
+                   RESET FORM
+                ========================= */
+
+                registerForm.reset();
+
+
+                /* =========================
+                   NEW CAPTCHA
+                ========================= */
+
+                generateCaptcha();
+
+
+                /* =========================
+                   CLEAR OTP BOXES
+                ========================= */
+
+                otpBoxes.forEach(
+                    function (box) {
+
+                        box.value = "";
+
+                        box.classList.remove(
+                            "input-invalid"
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Unexpected registration error:",
+                    error
+                );
+
+
+                alert(
+                    "Something went wrong while submitting the registration."
+                );
+
+            } finally {
+
+                /* =========================
+                   ENABLE SUBMIT BUTTON
+                ========================= */
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Submit Registration Request";
+
+                }
+
+            }
 
         }
     );
