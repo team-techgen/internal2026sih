@@ -1,0 +1,49 @@
+/* =========================
+   GENERAL
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background: #f4fffc;
+
+    color: #024d50;
+}
+
+
+/* =========================
+   DEVELOPMENT PAGE
+========================= */
+
+.development-page {
+    text-align: center;
+
+    padding: 40px;
+}
+
+
+.development-page h1 {
+    margin-bottom: 15px;
+
+    font-size: 32px;
+}
+
+
+.development-page p {
+    font-size: 18px;
+
+    color: #3b7775;
+}
