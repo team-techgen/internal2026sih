@@ -19,7 +19,7 @@
         </a>
 
 
-        <!-- Navigation -->
+        <!-- Desktop Navigation -->
         <nav class="nav-menu">
 
             <a href="../Home/index.html">
@@ -48,15 +48,53 @@
         <!-- Right Side -->
         <div class="header-actions">
 
+            <!-- Login -->
             <button class="login-btn"
                     type="button">
                 Login
             </button>
 
-            <button class="signup-btn"
-                    type="button">
-                Get Started
-            </button>
+
+            <!-- Get Started -->
+            <div class="get-started-wrapper">
+
+                <button id="getStartedBtn"
+                        class="signup-btn"
+                        type="button"
+                        aria-expanded="false">
+
+                    Get Started
+
+                    <span class="get-started-arrow">
+                        ⌄
+                    </span>
+
+                </button>
+
+
+                <!-- Get Started Options -->
+                <div id="getStartedMenu"
+                     class="get-started-menu">
+
+                    <button type="button">
+                        USER
+                    </button>
+
+                    <button type="button">
+                        KIOSK
+                    </button>
+
+                    <button type="button">
+                        INSTITUTE
+                    </button>
+
+                    <button type="button">
+                        ADMIN
+                    </button>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -75,8 +113,7 @@
     </div>
 
 
-    <!-- Mobile Hidden Navigation -->
-
+    <!-- Mobile Navigation -->
     <div id="mobileNavDropdown"
          class="mobile-nav-dropdown">
 

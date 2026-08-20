@@ -1,4 +1,4 @@
-fetch("../header/header.html?v=2")
+fetch("../header/header.html?v=3")
     .then(response => {
 
         if (!response.ok) {
@@ -23,32 +23,32 @@ fetch("../header/header.html?v=2")
 
 
         /* =========================
-           MOBILE NAV DROPDOWN
+           MOBILE NAVIGATION
         ========================= */
 
-        const toggle =
+        const mobileToggle =
             document.getElementById("mobileNavToggle");
 
-        const dropdown =
+        const mobileDropdown =
             document.getElementById("mobileNavDropdown");
 
 
-        if (toggle && dropdown) {
+        if (mobileToggle && mobileDropdown) {
 
-            toggle.addEventListener(
+            mobileToggle.addEventListener(
                 "click",
                 function () {
 
-                    dropdown.classList.toggle("active");
+                    mobileDropdown.classList.toggle("active");
 
-                    toggle.classList.toggle("active");
+                    mobileToggle.classList.toggle("active");
 
 
                     const isOpen =
-                        dropdown.classList.contains("active");
+                        mobileDropdown.classList.contains("active");
 
 
-                    toggle.setAttribute(
+                    mobileToggle.setAttribute(
                         "aria-expanded",
                         isOpen
                     );
@@ -57,26 +57,27 @@ fetch("../header/header.html?v=2")
             );
 
 
-            /* Close when a link is clicked */
+            /* Close mobile navigation when link is clicked */
 
-            const links =
-                dropdown.querySelectorAll("a");
+            const mobileLinks =
+                mobileDropdown.querySelectorAll("a");
 
-            links.forEach(link => {
+
+            mobileLinks.forEach(link => {
 
                 link.addEventListener(
                     "click",
                     function () {
 
-                        dropdown.classList.remove(
+                        mobileDropdown.classList.remove(
                             "active"
                         );
 
-                        toggle.classList.remove(
+                        mobileToggle.classList.remove(
                             "active"
                         );
 
-                        toggle.setAttribute(
+                        mobileToggle.setAttribute(
                             "aria-expanded",
                             "false"
                         );
@@ -85,6 +86,127 @@ fetch("../header/header.html?v=2")
                 );
 
             });
+
+        }
+
+
+        /* =========================
+           GET STARTED DROPDOWN
+        ========================= */
+
+        const getStartedBtn =
+            document.getElementById("getStartedBtn");
+
+        const getStartedMenu =
+            document.getElementById("getStartedMenu");
+
+        const getStartedWrapper =
+            document.querySelector(".get-started-wrapper");
+
+
+        if (
+            getStartedBtn &&
+            getStartedMenu &&
+            getStartedWrapper
+        ) {
+
+            /* Open / Close dropdown */
+
+            getStartedBtn.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                    getStartedMenu.classList.toggle(
+                        "active"
+                    );
+
+                    getStartedWrapper.classList.toggle(
+                        "active"
+                    );
+
+
+                    const isOpen =
+                        getStartedMenu.classList.contains(
+                            "active"
+                        );
+
+
+                    getStartedBtn.setAttribute(
+                        "aria-expanded",
+                        isOpen
+                    );
+
+                }
+            );
+
+
+            /* =========================
+               OPTIONS
+            ========================= */
+
+            const options =
+                getStartedMenu.querySelectorAll(
+                    "button"
+                );
+
+
+            options.forEach(option => {
+
+                option.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                        /*
+                         * Currently non-functional.
+                         * Functions will be added later.
+                         */
+
+                        console.log(
+                            "Selected:",
+                            option.textContent.trim()
+                        );
+
+                    }
+                );
+
+            });
+
+
+            /* =========================
+               CLOSE ON OUTSIDE CLICK
+            ========================= */
+
+            document.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        !getStartedWrapper.contains(
+                            event.target
+                        )
+                    ) {
+
+                        getStartedMenu.classList.remove(
+                            "active"
+                        );
+
+                        getStartedWrapper.classList.remove(
+                            "active"
+                        );
+
+                        getStartedBtn.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+
+                }
+            );
 
         }
 
