@@ -144,22 +144,6 @@ numericOnly(
    CAPTCHA
 ========================= */
 
-/*
-   Allowed CAPTCHA characters:
-
-   Uppercase:
-   A B D E F G H M N P Q R T
-
-   Lowercase:
-   a b d e f g h m n p q r t
-
-   Numbers:
-   0-9
-
-   Symbols:
-   @ #
-*/
-
 const CAPTCHA_CHARACTERS =
     "ABDEFGHMNPQRTabdefghmnpqrt0123456789@#";
 
@@ -175,11 +159,6 @@ function generateCaptcha() {
 
     let newCaptcha = "";
 
-
-    /*
-       Generate a new
-       6-character CAPTCHA.
-    */
 
     do {
 
@@ -207,6 +186,7 @@ function generateCaptcha() {
         }
 
     }
+
     while (
         newCaptcha === currentCaptcha
     );
@@ -390,10 +370,8 @@ otpBoxes.forEach(
 
                 for (
                     let i = 0;
-
                     i < pasted.length &&
                     i < otpBoxes.length;
-
                     i++
                 ) {
 
@@ -431,6 +409,10 @@ otpBoxes.forEach(
    EMAIL OTP
 ========================= */
 
+let emailOtpSentTo = "";
+let emailOtpVerified = false;
+
+
 const sendEmailOtpBtn =
     document.getElementById(
         "sendEmailOtp"
@@ -441,13 +423,24 @@ if (sendEmailOtpBtn) {
 
     sendEmailOtpBtn.addEventListener(
         "click",
-        function () {
+        async function () {
 
             const email =
-                document.getElementById(
-                    "instituteEmail"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "instituteEmail"
+                    )
+                    .value
+                    .trim();
 
+
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            /* =====================
+               EMAIL REQUIRED
+            ===================== */
 
             if (!email) {
 
@@ -458,9 +451,11 @@ if (sendEmailOtpBtn) {
                 );
 
 
-                document.getElementById(
-                    "instituteEmail"
-                ).focus();
+                document
+                    .getElementById(
+                        "instituteEmail"
+                    )
+                    .focus();
 
 
                 return;
@@ -468,9 +463,9 @@ if (sendEmailOtpBtn) {
             }
 
 
-            const emailPattern =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+            /* =====================
+               EMAIL FORMAT
+            ===================== */
 
             if (
                 !emailPattern.test(
@@ -485,9 +480,11 @@ if (sendEmailOtpBtn) {
                 );
 
 
-                document.getElementById(
-                    "instituteEmail"
-                ).focus();
+                document
+                    .getElementById(
+                        "instituteEmail"
+                    )
+                    .focus();
 
 
                 return;
@@ -501,14 +498,135 @@ if (sendEmailOtpBtn) {
             );
 
 
-            /*
-               EMAIL OTP BACKEND
-               WILL BE CONNECTED LATER.
-            */
+            /* =====================
+               SUPABASE CHECK
+            ===================== */
 
-            alert(
-                "Email OTP functionality will be connected later."
-            );
+            if (
+                typeof supabaseClient ===
+                "undefined" ||
+                !supabaseClient
+            ) {
+
+                alert(
+                    "Supabase is not initialized. Please check your Supabase configuration."
+                );
+
+
+                return;
+
+            }
+
+
+            sendEmailOtpBtn.disabled =
+                true;
+
+
+            sendEmailOtpBtn.textContent =
+                "Sending...";
+
+
+            try {
+
+                const {
+                    error
+                } =
+                    await supabaseClient.auth.signInWithOtp({
+
+                        email: email,
+
+                        options: {
+
+                            shouldCreateUser:
+                                true
+
+                        }
+
+                    });
+
+
+                if (error) {
+
+                    console.error(
+                        "❌ Email OTP error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to send Email OTP.\n\n" +
+                        error.message
+                    );
+
+
+                    return;
+
+                }
+
+
+                emailOtpSentTo =
+                    email;
+
+
+                emailOtpVerified =
+                    false;
+
+
+                /*
+                   Clear old OTP
+                */
+
+                document
+                    .getElementById(
+                        "emailOtp"
+                    )
+                    .value = "";
+
+
+                clearError(
+                    "emailOtp",
+                    "emailOtpError"
+                );
+
+
+                alert(
+                    "A 6-digit OTP has been sent to:\n\n" +
+                    email
+                );
+
+
+                document
+                    .getElementById(
+                        "emailOtp"
+                    )
+                    .focus();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "❌ Unexpected Email OTP error:",
+                    error
+                );
+
+
+                alert(
+                    "Something went wrong while sending the Email OTP."
+                );
+
+            }
+
+            finally {
+
+                sendEmailOtpBtn.disabled =
+                    false;
+
+
+                sendEmailOtpBtn.textContent =
+                    "Send Email OTP";
+
+            }
 
         }
     );
@@ -517,8 +635,203 @@ if (sendEmailOtpBtn) {
 
 
 /* =========================
+   VERIFY EMAIL OTP
+========================= */
+
+async function verifyEmailOtp() {
+
+    const email =
+        document
+            .getElementById(
+                "instituteEmail"
+            )
+            .value
+            .trim();
+
+
+    const otp =
+        document
+            .getElementById(
+                "emailOtp"
+            )
+            .value
+            .trim();
+
+
+    /* =====================
+       EMAIL CHECK
+    ===================== */
+
+    if (!email) {
+
+        showError(
+            "instituteEmail",
+            "emailError",
+            "Please enter the institute email address."
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================
+       OTP SENT CHECK
+    ===================== */
+
+    if (
+        !emailOtpSentTo ||
+        emailOtpSentTo !== email
+    ) {
+
+        showError(
+            "emailOtp",
+            "emailOtpError",
+            "Please send a new Email OTP for this email address."
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================
+       OTP LENGTH
+    ===================== */
+
+    if (
+        otp.length !== 6
+    ) {
+
+        showError(
+            "emailOtp",
+            "emailOtpError",
+            "Please enter the complete 6-digit Email OTP."
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================
+       SUPABASE CHECK
+    ===================== */
+
+    if (
+        typeof supabaseClient ===
+        "undefined" ||
+        !supabaseClient
+    ) {
+
+        alert(
+            "Supabase is not initialized."
+        );
+
+
+        return false;
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.verifyOtp({
+
+                email:
+                    email,
+
+                token:
+                    otp,
+
+                type:
+                    "email"
+
+            });
+
+
+        if (error) {
+
+            console.error(
+                "❌ Email OTP verification error:",
+                error
+            );
+
+
+            showError(
+                "emailOtp",
+                "emailOtpError",
+                "Invalid or expired Email OTP."
+            );
+
+
+            emailOtpVerified =
+                false;
+
+
+            return false;
+
+        }
+
+
+        emailOtpVerified =
+            true;
+
+
+        clearError(
+            "emailOtp",
+            "emailOtpError"
+        );
+
+
+        console.log(
+            "✅ Email OTP verified successfully."
+        );
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ Unexpected Email OTP verification error:",
+            error
+        );
+
+
+        showError(
+            "emailOtp",
+            "emailOtpError",
+            "Unable to verify Email OTP."
+        );
+
+
+        emailOtpVerified =
+            false;
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================
    MOBILE OTP
 ========================= */
+
+let mobileOtpSentTo = "";
+let mobileOtpVerified = false;
+
 
 const sendMobileOtpBtn =
     document.getElementById(
@@ -530,23 +843,25 @@ if (sendMobileOtpBtn) {
 
     sendMobileOtpBtn.addEventListener(
         "click",
-        function () {
+        async function () {
 
             const mobile =
-                document.getElementById(
-                    "instituteMobile"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "instituteMobile"
+                    )
+                    .value
+                    .trim();
 
 
             /*
-               Mobile number
-               is optional.
+               Mobile is optional.
             */
 
             if (!mobile) {
 
                 alert(
-                    "Mobile number is optional. Please enter a mobile number to receive Mobile OTP."
+                    "Please enter a mobile number to receive Mobile OTP."
                 );
 
 
@@ -554,6 +869,10 @@ if (sendMobileOtpBtn) {
 
             }
 
+
+            /* =====================
+               MOBILE VALIDATION
+            ===================== */
 
             if (
                 mobile.length !== 10
@@ -566,9 +885,11 @@ if (sendMobileOtpBtn) {
                 );
 
 
-                document.getElementById(
-                    "instituteMobile"
-                ).focus();
+                document
+                    .getElementById(
+                        "instituteMobile"
+                    )
+                    .focus();
 
 
                 return;
@@ -582,17 +903,324 @@ if (sendMobileOtpBtn) {
             );
 
 
-            /*
-               MOBILE OTP BACKEND
-               WILL BE CONNECTED LATER.
-            */
+            /* =====================
+               SUPABASE CHECK
+            ===================== */
 
-            alert(
-                "Mobile OTP functionality will be connected later."
-            );
+            if (
+                typeof supabaseClient ===
+                "undefined" ||
+                !supabaseClient
+            ) {
+
+                alert(
+                    "Supabase is not initialized."
+                );
+
+
+                return;
+
+            }
+
+
+            const phone =
+                "+91" + mobile;
+
+
+            sendMobileOtpBtn.disabled =
+                true;
+
+
+            sendMobileOtpBtn.textContent =
+                "Sending...";
+
+
+            try {
+
+                const {
+                    error
+                } =
+                    await supabaseClient.auth.signInWithOtp({
+
+                        phone:
+                            phone
+
+                    });
+
+
+                if (error) {
+
+                    console.error(
+                        "❌ Mobile OTP error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to send Mobile OTP.\n\n" +
+                        error.message
+                    );
+
+
+                    return;
+
+                }
+
+
+                mobileOtpSentTo =
+                    mobile;
+
+
+                mobileOtpVerified =
+                    false;
+
+
+                document
+                    .getElementById(
+                        "mobileOtp"
+                    )
+                    .value = "";
+
+
+                clearError(
+                    "mobileOtp",
+                    "mobileOtpError"
+                );
+
+
+                alert(
+                    "A 6-digit OTP has been sent to:\n\n" +
+                    "+91 " +
+                    mobile
+                );
+
+
+                document
+                    .getElementById(
+                        "mobileOtp"
+                    )
+                    .focus();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "❌ Unexpected Mobile OTP error:",
+                    error
+                );
+
+
+                alert(
+                    "Something went wrong while sending the Mobile OTP."
+                );
+
+            }
+
+            finally {
+
+                sendMobileOtpBtn.disabled =
+                    false;
+
+
+                sendMobileOtpBtn.textContent =
+                    "Send Mobile OTP";
+
+            }
 
         }
     );
+
+}
+
+
+/* =========================
+   VERIFY MOBILE OTP
+========================= */
+
+async function verifyMobileOtp() {
+
+    const mobile =
+        document
+            .getElementById(
+                "instituteMobile"
+            )
+            .value
+            .trim();
+
+
+    const otp =
+        document
+            .getElementById(
+                "mobileOtp"
+            )
+            .value
+            .trim();
+
+
+    /*
+       Mobile is optional.
+    */
+
+    if (!mobile) {
+
+        mobileOtpVerified =
+            false;
+
+        return true;
+
+    }
+
+
+    /* =====================
+       OTP SENT CHECK
+    ===================== */
+
+    if (
+        !mobileOtpSentTo ||
+        mobileOtpSentTo !== mobile
+    ) {
+
+        showError(
+            "mobileOtp",
+            "mobileOtpError",
+            "Please send a new Mobile OTP for this mobile number."
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================
+       OTP LENGTH
+    ===================== */
+
+    if (
+        otp.length !== 6
+    ) {
+
+        showError(
+            "mobileOtp",
+            "mobileOtpError",
+            "Please enter the complete 6-digit Mobile OTP."
+        );
+
+
+        return false;
+
+    }
+
+
+    /* =====================
+       SUPABASE CHECK
+    ===================== */
+
+    if (
+        typeof supabaseClient ===
+        "undefined" ||
+        !supabaseClient
+    ) {
+
+        alert(
+            "Supabase is not initialized."
+        );
+
+
+        return false;
+
+    }
+
+
+    const phone =
+        "+91" + mobile;
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.verifyOtp({
+
+                phone:
+                    phone,
+
+                token:
+                    otp,
+
+                type:
+                    "sms"
+
+            });
+
+
+        if (error) {
+
+            console.error(
+                "❌ Mobile OTP verification error:",
+                error
+            );
+
+
+            showError(
+                "mobileOtp",
+                "mobileOtpError",
+                "Invalid or expired Mobile OTP."
+            );
+
+
+            mobileOtpVerified =
+                false;
+
+
+            return false;
+
+        }
+
+
+        mobileOtpVerified =
+            true;
+
+
+        clearError(
+            "mobileOtp",
+            "mobileOtpError"
+        );
+
+
+        console.log(
+            "✅ Mobile OTP verified successfully."
+        );
+
+
+        return true;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ Unexpected Mobile OTP verification error:",
+            error
+        );
+
+
+        showError(
+            "mobileOtp",
+            "mobileOtpError",
+            "Unable to verify Mobile OTP."
+        );
+
+
+        mobileOtpVerified =
+            false;
+
+
+        return false;
+
+    }
 
 }
 
@@ -624,9 +1252,12 @@ if (registerForm) {
             ===================== */
 
             const userId =
-                document.getElementById(
-                    "userId"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "userId"
+                    )
+                    .value
+                    .trim();
 
 
             if (!userId) {
@@ -641,6 +1272,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -656,9 +1288,11 @@ if (registerForm) {
             ===================== */
 
             const instituteType =
-                document.getElementById(
-                    "instituteType"
-                ).value;
+                document
+                    .getElementById(
+                        "instituteType"
+                    )
+                    .value;
 
 
             if (!instituteType) {
@@ -673,6 +1307,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -688,9 +1323,12 @@ if (registerForm) {
             ===================== */
 
             const instituteName =
-                document.getElementById(
-                    "instituteName"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "instituteName"
+                    )
+                    .value
+                    .trim();
 
 
             if (!instituteName) {
@@ -705,6 +1343,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -720,9 +1359,12 @@ if (registerForm) {
             ===================== */
 
             const instituteAddress =
-                document.getElementById(
-                    "instituteAddress"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "instituteAddress"
+                    )
+                    .value
+                    .trim();
 
 
             if (!instituteAddress) {
@@ -737,6 +1379,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -752,9 +1395,12 @@ if (registerForm) {
             ===================== */
 
             const instituteEmail =
-                document.getElementById(
-                    "instituteEmail"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "instituteEmail"
+                    )
+                    .value
+                    .trim();
 
 
             const emailPattern =
@@ -773,6 +1419,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else if (
                 !emailPattern.test(
                     instituteEmail
@@ -789,6 +1436,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -805,9 +1453,12 @@ if (registerForm) {
             ===================== */
 
             const instituteMobile =
-                document.getElementById(
-                    "instituteMobile"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "instituteMobile"
+                    )
+                    .value
+                    .trim();
 
 
             if (
@@ -825,6 +1476,7 @@ if (registerForm) {
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -835,161 +1487,241 @@ if (registerForm) {
             }
 
 
-            /* =====================
+            /* =========================
                AUTHORIZATION DOCUMENT
-            ===================== */
+               OPTIONAL
+            ========================= */
 
-            /* =====================
-   AUTHORIZATION DOCUMENT
-   OPTIONAL
-   ===================== */
-
-const authorizationDocument =
-    document.getElementById("authorizationDocument");
-
-/*
-   Approval / Authorization Document
-   is currently optional.
-
-   If a file is selected, validate its
-   type and size.
-*/
-
-if (
-    authorizationDocument &&
-    authorizationDocument.files.length > 0
-) {
-
-    const file =
-        authorizationDocument.files[0];
-
-    /* Allowed file types */
-
-    const allowedTypes = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png"
-    ];
-
-    if (
-        !allowedTypes.includes(file.type)
-    ) {
-
-        showError(
-            "authorizationDocument",
-            "authorizationError",
-            "Only PDF, JPG or PNG files are allowed."
-        );
-
-        isValid = false;
-
-    }
-    else {
-
-        clearError(
-            "authorizationDocument",
-            "authorizationError"
-        );
-
-    }
-
-
-    /* Maximum file size: 5 MB */
-
-    const maxFileSize =
-        5 * 1024 * 1024;
-
-    if (
-        file.size > maxFileSize
-    ) {
-
-        showError(
-            "authorizationDocument",
-            "authorizationError",
-            "File size must be 5 MB or less."
-        );
-
-        isValid = false;
-
-    }
-
-}
-else {
-
-    /*
-       No document selected.
-       This is allowed because the document
-       is currently optional.
-    */
-
-    clearError(
-        "authorizationDocument",
-        "authorizationError"
-    );
-
-}
-
-/* =====================
-   EMAIL OTP
-   TEMPORARILY OPTIONAL
-   ===================== */
-
-const emailOtp =
-    document.getElementById("emailOtp").value.trim();
-
-/*
-   Email OTP backend is not connected yet.
-   Therefore OTP validation is temporarily skipped.
-*/
-
-clearError(
-    "emailOtp",
-    "emailOtpError"
-);
-
-
-            /* =====================
-               MOBILE OTP
-            ===================== */
-
-            const mobileOtp =
+            const authorizationDocument =
                 document.getElementById(
-                    "mobileOtp"
-                ).value.trim();
+                    "authorizationDocument"
+                );
 
 
             /*
-               Mobile OTP is required
-               only if mobile number
-               is provided.
+               Document is optional.
+
+               If a document is selected,
+               validate its type and size.
             */
 
-            if (instituteMobile) {
+            if (
+                authorizationDocument &&
+                authorizationDocument.files.length > 0
+            ) {
+
+                const file =
+                    authorizationDocument
+                        .files[0];
+
+
+                const allowedTypes = [
+
+                    "application/pdf",
+
+                    "image/jpeg",
+
+                    "image/png"
+
+                ];
+
+
+                /* =====================
+                   FILE TYPE
+                ===================== */
 
                 if (
-                    mobileOtp.length !== 6
+                    !allowedTypes.includes(
+                        file.type
+                    )
                 ) {
 
                     showError(
-                        "mobileOtp",
-                        "mobileOtpError",
-                        "Please enter the complete 6-digit mobile OTP."
+                        "authorizationDocument",
+                        "authorizationError",
+                        "Only PDF, JPG or PNG files are allowed."
                     );
 
 
                     isValid = false;
 
                 }
+
                 else {
 
                     clearError(
-                        "mobileOtp",
-                        "mobileOtpError"
+                        "authorizationDocument",
+                        "authorizationError"
                     );
 
                 }
 
+
+                /* =====================
+                   FILE SIZE
+                ===================== */
+
+                const maxFileSize =
+                    5 * 1024 * 1024;
+
+
+                if (
+                    file.size >
+                    maxFileSize
+                ) {
+
+                    showError(
+                        "authorizationDocument",
+                        "authorizationError",
+                        "File size must be 5 MB or less."
+                    );
+
+
+                    isValid = false;
+
+                }
+
             }
+
+            else {
+
+                clearError(
+                    "authorizationDocument",
+                    "authorizationError"
+                );
+
+            }
+
+
+            /* =========================
+               EMAIL OTP
+            ========================= */
+
+            if (
+                instituteEmail !==
+                emailOtpSentTo
+            ) {
+
+                showError(
+                    "emailOtp",
+                    "emailOtpError",
+                    "Please send an Email OTP for this email address."
+                );
+
+
+                isValid = false;
+
+            }
+
+            else {
+
+                const emailOtp =
+                    document
+                        .getElementById(
+                            "emailOtp"
+                        )
+                        .value
+                        .trim();
+
+
+                if (
+                    emailOtp.length !== 6
+                ) {
+
+                    showError(
+                        "emailOtp",
+                        "emailOtpError",
+                        "Please enter the complete 6-digit Email OTP."
+                    );
+
+
+                    isValid = false;
+
+                }
+
+                else {
+
+                    const verified =
+                        await verifyEmailOtp();
+
+
+                    if (!verified) {
+
+                        isValid = false;
+
+                    }
+
+                }
+
+            }
+
+
+            /* =========================
+               MOBILE OTP
+            ========================= */
+
+            if (instituteMobile) {
+
+                if (
+                    instituteMobile !==
+                    mobileOtpSentTo
+                ) {
+
+                    showError(
+                        "mobileOtp",
+                        "mobileOtpError",
+                        "Please send a new Mobile OTP for this mobile number."
+                    );
+
+
+                    isValid = false;
+
+                }
+
+                else {
+
+                    const mobileOtp =
+                        document
+                            .getElementById(
+                                "mobileOtp"
+                            )
+                            .value
+                            .trim();
+
+
+                    if (
+                        mobileOtp.length !== 6
+                    ) {
+
+                        showError(
+                            "mobileOtp",
+                            "mobileOtpError",
+                            "Please enter the complete 6-digit Mobile OTP."
+                        );
+
+
+                        isValid = false;
+
+                    }
+
+                    else {
+
+                        const verified =
+                            await verifyMobileOtp();
+
+
+                        if (!verified) {
+
+                            isValid = false;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
             else {
 
                 clearError(
@@ -1000,14 +1732,17 @@ clearError(
             }
 
 
-            /* =====================
+            /* =========================
                CAPTCHA
-            ===================== */
+            ========================= */
 
             const captchaInput =
-                document.getElementById(
-                    "captchaInput"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "captchaInput"
+                    )
+                    .value
+                    .trim();
 
 
             if (!captchaInput) {
@@ -1022,6 +1757,7 @@ clearError(
                 isValid = false;
 
             }
+
             else if (
                 captchaInput !==
                 currentCaptcha
@@ -1037,6 +1773,7 @@ clearError(
                 isValid = false;
 
             }
+
             else {
 
                 clearError(
@@ -1047,9 +1784,9 @@ clearError(
             }
 
 
-            /* =====================
+            /* =========================
                STOP IF INVALID
-            ===================== */
+            ========================= */
 
             if (!isValid) {
 
@@ -1058,9 +1795,9 @@ clearError(
             }
 
 
-            /* =====================
+            /* =========================
                SUPABASE CHECK
-            ===================== */
+            ========================= */
 
             if (
                 typeof supabaseClient ===
@@ -1083,9 +1820,9 @@ clearError(
             }
 
 
-            /* =====================
+            /* =========================
                SUBMIT BUTTON
-            ===================== */
+            ========================= */
 
             const submitButton =
                 registerForm.querySelector(
@@ -1117,46 +1854,39 @@ clearError(
                     await supabaseClient
                         .from("institutes")
                         .insert([
+
                             {
 
                                 user_id:
                                     userId,
 
+
                                 institute_type:
                                     instituteType,
+
 
                                 institute_name:
                                     instituteName,
 
+
                                 institute_address:
                                     instituteAddress,
 
+
                                 institute_email:
                                     instituteEmail,
+
 
                                 institute_mobile:
                                     instituteMobile ||
                                     null,
 
-                                /*
-                                   Storage upload will be
-                                   connected next.
-
-                                   For now the document
-                                   path is NULL.
-                                */
 
                                 authorization_document_path:
-                                    null,
-
-                                /*
-                                   Your database already
-                                   has:
-
-                                   status = 'pending'
-                                */
+                                    null
 
                             }
+
                         ]);
 
 
@@ -1188,9 +1918,11 @@ clearError(
                         );
 
 
-                        document.getElementById(
-                            "userId"
-                        ).focus();
+                        document
+                            .getElementById(
+                                "userId"
+                            )
+                            .focus();
 
 
                         return;
@@ -1257,6 +1989,24 @@ clearError(
 
 
                 /* =========================
+                   RESET OTP STATES
+                ========================= */
+
+                emailOtpSentTo =
+                    "";
+
+                emailOtpVerified =
+                    false;
+
+
+                mobileOtpSentTo =
+                    "";
+
+                mobileOtpVerified =
+                    false;
+
+
+                /* =========================
                    NEW CAPTCHA
                 ========================= */
 
@@ -1270,13 +2020,12 @@ clearError(
                 otpBoxes.forEach(
                     function (box) {
 
-                        box.value = "";
-
+                        box.value =
+                            "";
 
                         box.classList.remove(
                             "input-invalid"
                         );
-
 
                         box.classList.remove(
                             "input-valid"
@@ -1305,8 +2054,8 @@ clearError(
                     }
                 );
 
-
             }
+
             catch (error) {
 
                 console.error(
@@ -1320,6 +2069,7 @@ clearError(
                 );
 
             }
+
             finally {
 
                 /* =========================
