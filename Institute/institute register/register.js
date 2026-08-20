@@ -7,9 +7,7 @@
    SUPABASE CHECK
 ========================= */
 
-
-
-if (!supabaseClient) {
+if (typeof supabaseClient === "undefined") {
 
     console.error(
         "❌ Supabase client is not available."
@@ -58,6 +56,10 @@ function showError(
 }
 
 
+/* =========================
+   CLEAR ERROR
+========================= */
+
 function clearError(
     inputId,
     errorId
@@ -99,7 +101,9 @@ function numericOnly(inputId) {
 
 
     if (!input) {
+
         return;
+
     }
 
 
@@ -123,16 +127,38 @@ function numericOnly(inputId) {
    NUMERIC INPUTS
 ========================= */
 
-numericOnly("instituteMobile");
+numericOnly(
+    "instituteMobile"
+);
 
-numericOnly("emailOtp");
+numericOnly(
+    "emailOtp"
+);
 
-numericOnly("mobileOtp");
+numericOnly(
+    "mobileOtp"
+);
 
 
 /* =========================
    CAPTCHA
 ========================= */
+
+/*
+   Allowed CAPTCHA characters:
+
+   Uppercase:
+   A B D E F G H M N P Q R T
+
+   Lowercase:
+   a b d e f g h m n p q r t
+
+   Numbers:
+   0-9
+
+   Symbols:
+   @ #
+*/
 
 const CAPTCHA_CHARACTERS =
     "ABDEFGHMNPQRTabdefghmnpqrt0123456789@#";
@@ -150,23 +176,21 @@ function generateCaptcha() {
     let newCaptcha = "";
 
 
+    /*
+       Generate a new
+       6-character CAPTCHA.
+    */
+
     do {
 
         newCaptcha = "";
 
 
-        /*
-           Generate 6 characters
-
-           Allowed:
-           Selected uppercase letters
-           Selected lowercase letters
-           0-9
-           @
-           #
-        */
-
-        for (let i = 0; i < 6; i++) {
+        for (
+            let i = 0;
+            i < 6;
+            i++
+        ) {
 
             const randomIndex =
                 Math.floor(
@@ -182,7 +206,8 @@ function generateCaptcha() {
 
         }
 
-    } while (
+    }
+    while (
         newCaptcha === currentCaptcha
     );
 
@@ -240,7 +265,11 @@ if (refreshCaptcha) {
 
     refreshCaptcha.addEventListener(
         "click",
-        generateCaptcha
+        function () {
+
+            generateCaptcha();
+
+        }
     );
 
 }
@@ -264,11 +293,14 @@ const otpBoxes =
 
 
 otpBoxes.forEach(
-    function (box, index) {
+    function (
+        box,
+        index
+    ) {
 
 
         /* =====================
-           INPUT
+           OTP INPUT
         ===================== */
 
         box.addEventListener(
@@ -334,17 +366,26 @@ otpBoxes.forEach(
                 event.preventDefault();
 
 
+                const clipboard =
+                    event.clipboardData ||
+                    window.clipboardData;
+
+
+                if (!clipboard) {
+
+                    return;
+
+                }
+
+
                 const pasted =
-                    (
-                        event.clipboardData ||
-                        window.clipboardData
-                    )
-                    .getData("text")
-                    .replace(
-                        /[^0-9]/g,
-                        ""
-                    )
-                    .slice(0, 6);
+                    clipboard
+                        .getData("text")
+                        .replace(
+                            /[^0-9]/g,
+                            ""
+                        )
+                        .slice(0, 6);
 
 
                 for (
@@ -416,9 +457,38 @@ if (sendEmailOtpBtn) {
                     "Please enter the institute email address."
                 );
 
+
                 document.getElementById(
                     "instituteEmail"
                 ).focus();
+
+
+                return;
+
+            }
+
+
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (
+                !emailPattern.test(
+                    email
+                )
+            ) {
+
+                showError(
+                    "instituteEmail",
+                    "emailError",
+                    "Please enter a valid email address."
+                );
+
+
+                document.getElementById(
+                    "instituteEmail"
+                ).focus();
+
 
                 return;
 
@@ -431,8 +501,13 @@ if (sendEmailOtpBtn) {
             );
 
 
+            /*
+               EMAIL OTP BACKEND
+               WILL BE CONNECTED LATER.
+            */
+
             alert(
-                "Email OTP functionality will be added later."
+                "Email OTP functionality will be connected later."
             );
 
         }
@@ -464,7 +539,8 @@ if (sendMobileOtpBtn) {
 
 
             /*
-               Mobile number is optional.
+               Mobile number
+               is optional.
             */
 
             if (!mobile) {
@@ -472,6 +548,7 @@ if (sendMobileOtpBtn) {
                 alert(
                     "Mobile number is optional. Please enter a mobile number to receive Mobile OTP."
                 );
+
 
                 return;
 
@@ -488,9 +565,11 @@ if (sendMobileOtpBtn) {
                     "Please enter a valid 10-digit mobile number."
                 );
 
+
                 document.getElementById(
                     "instituteMobile"
                 ).focus();
+
 
                 return;
 
@@ -503,8 +582,13 @@ if (sendMobileOtpBtn) {
             );
 
 
+            /*
+               MOBILE OTP BACKEND
+               WILL BE CONNECTED LATER.
+            */
+
             alert(
-                "Mobile OTP functionality will be added later."
+                "Mobile OTP functionality will be connected later."
             );
 
         }
@@ -553,9 +637,11 @@ if (registerForm) {
                     "Please enter a User ID."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "userId",
@@ -583,9 +669,11 @@ if (registerForm) {
                     "Please select an institute type."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "instituteType",
@@ -613,9 +701,11 @@ if (registerForm) {
                     "Please enter the institute name."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "instituteName",
@@ -626,7 +716,7 @@ if (registerForm) {
 
 
             /* =====================
-               ADDRESS
+               INSTITUTE ADDRESS
             ===================== */
 
             const instituteAddress =
@@ -643,9 +733,11 @@ if (registerForm) {
                     "Please enter the institute address."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "instituteAddress",
@@ -656,13 +748,17 @@ if (registerForm) {
 
 
             /* =====================
-               EMAIL
+               INSTITUTE EMAIL
             ===================== */
 
             const instituteEmail =
                 document.getElementById(
                     "instituteEmail"
                 ).value.trim();
+
+
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
             if (!instituteEmail) {
@@ -673,36 +769,32 @@ if (registerForm) {
                     "Please enter the institute email address."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else if (
+                !emailPattern.test(
+                    instituteEmail
+                )
+            ) {
 
-                const emailPattern =
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                showError(
+                    "instituteEmail",
+                    "emailError",
+                    "Please enter a valid email address."
+                );
 
 
-                if (
-                    !emailPattern.test(
-                        instituteEmail
-                    )
-                ) {
+                isValid = false;
 
-                    showError(
-                        "instituteEmail",
-                        "emailError",
-                        "Please enter a valid email address."
-                    );
+            }
+            else {
 
-                    isValid = false;
-
-                } else {
-
-                    clearError(
-                        "instituteEmail",
-                        "emailError"
-                    );
-
-                }
+                clearError(
+                    "instituteEmail",
+                    "emailError"
+                );
 
             }
 
@@ -729,9 +821,11 @@ if (registerForm) {
                     "Please enter a valid 10-digit mobile number."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "instituteMobile",
@@ -752,7 +846,7 @@ if (registerForm) {
 
 
             if (
-                authorizationDocument &&
+                !authorizationDocument ||
                 authorizationDocument.files.length === 0
             ) {
 
@@ -762,14 +856,76 @@ if (registerForm) {
                     "Please upload the approval or authorization document."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "authorizationDocument",
                     "authorizationError"
                 );
+
+
+                /*
+                   Validate file type.
+                */
+
+                const file =
+                    authorizationDocument
+                        .files[0];
+
+
+                const allowedTypes = [
+                    "application/pdf",
+                    "image/jpeg",
+                    "image/png"
+                ];
+
+
+                if (
+                    !allowedTypes.includes(
+                        file.type
+                    )
+                ) {
+
+                    showError(
+                        "authorizationDocument",
+                        "authorizationError",
+                        "Only PDF, JPG or PNG files are allowed."
+                    );
+
+
+                    isValid = false;
+
+                }
+
+
+                /*
+                   Maximum file size:
+                   5 MB
+                */
+
+                const maxFileSize =
+                    5 * 1024 * 1024;
+
+
+                if (
+                    file.size >
+                    maxFileSize
+                ) {
+
+                    showError(
+                        "authorizationDocument",
+                        "authorizationError",
+                        "File size must be 5 MB or less."
+                    );
+
+
+                    isValid = false;
+
+                }
 
             }
 
@@ -794,9 +950,11 @@ if (registerForm) {
                     "Please enter the complete 6-digit email OTP."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "emailOtp",
@@ -818,7 +976,8 @@ if (registerForm) {
 
             /*
                Mobile OTP is required
-               only when mobile is provided.
+               only if mobile number
+               is provided.
             */
 
             if (instituteMobile) {
@@ -833,9 +992,11 @@ if (registerForm) {
                         "Please enter the complete 6-digit mobile OTP."
                     );
 
+
                     isValid = false;
 
-                } else {
+                }
+                else {
 
                     clearError(
                         "mobileOtp",
@@ -844,7 +1005,8 @@ if (registerForm) {
 
                 }
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "mobileOtp",
@@ -872,10 +1034,13 @@ if (registerForm) {
                     "Please enter the CAPTCHA."
                 );
 
+
                 isValid = false;
 
-            } else if (
-                captchaInput !== currentCaptcha
+            }
+            else if (
+                captchaInput !==
+                currentCaptcha
             ) {
 
                 showError(
@@ -884,9 +1049,11 @@ if (registerForm) {
                     "Incorrect CAPTCHA. Please try again."
                 );
 
+
                 isValid = false;
 
-            } else {
+            }
+            else {
 
                 clearError(
                     "captchaInput",
@@ -907,28 +1074,34 @@ if (registerForm) {
             }
 
 
-            /* =========================
+            /* =====================
                SUPABASE CHECK
-            ========================= */
+            ===================== */
 
-            if (!supabaseClient) {
+            if (
+                typeof supabaseClient ===
+                "undefined" ||
+                !supabaseClient
+            ) {
 
                 alert(
                     "Supabase is not initialized. Please check your Supabase configuration."
                 );
 
+
                 console.error(
                     "❌ supabaseClient is undefined."
                 );
+
 
                 return;
 
             }
 
 
-            /* =========================
-               DISABLE SUBMIT BUTTON
-            ========================= */
+            /* =====================
+               SUBMIT BUTTON
+            ===================== */
 
             const submitButton =
                 registerForm.querySelector(
@@ -940,6 +1113,7 @@ if (registerForm) {
 
                 submitButton.disabled =
                     true;
+
 
                 submitButton.textContent =
                     "Submitting...";
@@ -954,13 +1128,13 @@ if (registerForm) {
                 ========================= */
 
                 const {
-                    data,
                     error
                 } =
                     await supabaseClient
                         .from("institutes")
                         .insert([
                             {
+
                                 user_id:
                                     userId,
 
@@ -981,26 +1155,25 @@ if (registerForm) {
                                     null,
 
                                 /*
-                                   File upload will be
-                                   connected to Supabase
-                                   Storage next.
+                                   Storage upload will be
+                                   connected next.
 
-                                   Therefore this remains
-                                   NULL for now.
+                                   For now the document
+                                   path is NULL.
                                 */
 
                                 authorization_document_path:
                                     null,
 
                                 /*
-                                   Supabase table already
-                                   has default:
+                                   Your database already
+                                   has:
+
                                    status = 'pending'
                                 */
 
                             }
-                        ])
-                        .select();
+                        ]);
 
 
                 /* =========================
@@ -1015,9 +1188,9 @@ if (registerForm) {
                     );
 
 
-                    /*
-                       Duplicate User ID
-                    */
+                    /* =====================
+                       DUPLICATE USER ID
+                    ===================== */
 
                     if (
                         error.code ===
@@ -1030,18 +1203,46 @@ if (registerForm) {
                             "This User ID already exists. Please choose another."
                         );
 
+
                         document.getElementById(
                             "userId"
                         ).focus();
 
-                    } else {
+
+                        return;
+
+                    }
+
+
+                    /* =====================
+                       RLS ERROR
+                    ===================== */
+
+                    if (
+                        error.code ===
+                        "42501"
+                    ) {
 
                         alert(
                             "Registration failed.\n\n" +
-                            error.message
+                            "Supabase Row Level Security is blocking this registration.\n\n" +
+                            "Please check the INSERT policy for the institutes table."
                         );
 
+
+                        return;
+
                     }
+
+
+                    /* =====================
+                       GENERAL DATABASE ERROR
+                    ===================== */
+
+                    alert(
+                        "Registration failed.\n\n" +
+                        error.message
+                    );
 
 
                     return;
@@ -1054,8 +1255,7 @@ if (registerForm) {
                 ========================= */
 
                 console.log(
-                    "✅ Institute registered:",
-                    data
+                    "✅ Institute registration submitted successfully."
                 );
 
 
@@ -1088,15 +1288,42 @@ if (registerForm) {
 
                         box.value = "";
 
+
                         box.classList.remove(
                             "input-invalid"
+                        );
+
+
+                        box.classList.remove(
+                            "input-valid"
                         );
 
                     }
                 );
 
 
-            } catch (error) {
+                /* =========================
+                   CLEAR ERRORS
+                ========================= */
+
+                const errorElements =
+                    document.querySelectorAll(
+                        ".input-error"
+                    );
+
+
+                errorElements.forEach(
+                    function (error) {
+
+                        error.textContent =
+                            "";
+
+                    }
+                );
+
+
+            }
+            catch (error) {
 
                 console.error(
                     "❌ Unexpected registration error:",
@@ -1108,7 +1335,8 @@ if (registerForm) {
                     "Something went wrong while submitting the registration."
                 );
 
-            } finally {
+            }
+            finally {
 
                 /* =========================
                    ENABLE SUBMIT BUTTON
@@ -1118,6 +1346,7 @@ if (registerForm) {
 
                     submitButton.disabled =
                         false;
+
 
                     submitButton.textContent =
                         "Submit Registration Request";
@@ -1158,3 +1387,12 @@ if (loginLink) {
     );
 
 }
+
+
+/* =========================
+   DEBUG MESSAGE
+========================= */
+
+console.log(
+    "✅ Institute registration JavaScript loaded."
+);
