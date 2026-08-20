@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Institute Register | Inclusive Queue</title>
+    <title>Institute Registration | Inclusive Queue</title>
 
 
     <!-- =========================
@@ -32,7 +32,7 @@
     ========================== -->
 
     <link rel="stylesheet"
-          href="regiister.css">
+          href="register.css">
 
 
     <!-- =========================
@@ -63,18 +63,610 @@
 
 
     <!-- =========================
-         DEVELOPMENT MESSAGE
+         REGISTRATION PAGE
     ========================== -->
 
-    <main class="development-page">
+    <main class="register-page">
 
-        <h1>
-            Institute Registration
-        </h1>
 
-        <p>
-            This page is under development.
-        </p>
+        <!-- =========================
+             PAGE HEADER
+        ========================== -->
+
+        <section class="register-intro">
+
+            <span class="intro-label">
+                INSTITUTE ONBOARDING
+            </span>
+
+            <h1>
+                Institute Registration
+            </h1>
+
+            <p>
+                Register your institute to manage client queues
+                efficiently with Inclusive Queue.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             REGISTRATION CARD
+        ========================== -->
+
+        <section class="register-card">
+
+
+            <form
+                id="registerForm"
+                class="register-form"
+                novalidate>
+
+
+                <!-- =========================
+                     SECTION 01
+                ========================== -->
+
+                <div class="form-section">
+
+                    <div class="section-heading">
+
+                        <span class="section-number">
+                            01
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Institute Information
+                            </h2>
+
+                            <p>
+                                Provide the basic details of your institute.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- USER ID -->
+
+                    <div class="form-group">
+
+                        <label for="userId">
+                            User ID
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="userId"
+                            name="userId"
+                            placeholder="Enter a unique user ID"
+                            autocomplete="username"
+                            required>
+
+                        <small
+                            id="userIdError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- INSTITUTE TYPE -->
+
+                    <div class="form-group">
+
+                        <label for="instituteType">
+                            Institute Type
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="instituteType"
+                            name="instituteType"
+                            required>
+
+                            <option value="">
+                                Select institute type
+                            </option>
+
+                            <option value="hospital">
+                                Hospital / Clinic
+                            </option>
+
+                            <option value="bank">
+                                Bank / Financial Institution
+                            </option>
+
+                            <option value="government">
+                                Government Office
+                            </option>
+
+                            <option value="municipal">
+                                Municipal / Civic Service
+                            </option>
+
+                            <option value="post-office">
+                                Post Office
+                            </option>
+
+                            <option value="railway">
+                                Railway / Transport Service
+                            </option>
+
+                            <option value="airport">
+                                Airport / Travel Service
+                            </option>
+
+                            <option value="educational">
+                                Educational Institution
+                            </option>
+
+                            <option value="university">
+                                University / College
+                            </option>
+
+                            <option value="insurance">
+                                Insurance Office
+                            </option>
+
+                            <option value="telecom">
+                                Telecom / Communication Centre
+                            </option>
+
+                            <option value="retail">
+                                Retail / Shopping Centre
+                            </option>
+
+                            <option value="service-centre">
+                                Customer Service Centre
+                            </option>
+
+                            <option value="laboratory">
+                                Diagnostic / Laboratory Centre
+                            </option>
+
+                            <option value="pharmacy">
+                                Pharmacy
+                            </option>
+
+                            <option value="legal">
+                                Legal / Documentation Service
+                            </option>
+
+                            <option value="other">
+                                Other Queue-Based Service
+                            </option>
+
+                        </select>
+
+                        <small
+                            id="instituteTypeError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- INSTITUTE NAME -->
+
+                    <div class="form-group">
+
+                        <label for="instituteName">
+                            Institute Name
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="instituteName"
+                            name="instituteName"
+                            placeholder="Enter official institute name"
+                            required>
+
+                        <small
+                            id="instituteNameError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="form-group">
+
+                        <label for="instituteAddress">
+                            Institute Address
+                            <span>*</span>
+                        </label>
+
+                        <textarea
+                            id="instituteAddress"
+                            name="instituteAddress"
+                            rows="4"
+                            placeholder="Enter complete institute address"
+                            required></textarea>
+
+                        <small
+                            id="instituteAddressError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="instituteEmail">
+                            Institute Email ID
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="email"
+                            id="instituteEmail"
+                            name="instituteEmail"
+                            placeholder="example@institute.com"
+                            autocomplete="email"
+                            required>
+
+                        <small
+                            id="instituteEmailError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- MOBILE -->
+
+                    <div class="form-group">
+
+                        <label for="instituteMobile">
+                            Institute Mobile Number
+                            <em>(Optional)</em>
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="instituteMobile"
+                            name="instituteMobile"
+                            placeholder="Enter 10-digit mobile number"
+                            maxlength="10"
+                            inputmode="numeric">
+
+                        <small
+                            id="instituteMobileError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     SECTION 02
+                ========================== -->
+
+                <div class="form-section">
+
+                    <div class="section-heading">
+
+                        <span class="section-number">
+                            02
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Authorization
+                            </h2>
+
+                            <p>
+                                Provide details required for institute approval.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HEAD NAME -->
+
+                    <div class="form-group">
+
+                        <label for="headName">
+                            Head / Authorized Person Name
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="headName"
+                            name="headName"
+                            placeholder="Enter head or authorized person's name"
+                            required>
+
+                        <small
+                            id="headNameError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- APPROVAL DOCUMENT -->
+
+                    <div class="form-group">
+
+                        <label for="approvalDocument">
+                            Approval / Authorization Document
+                            <span>*</span>
+                        </label>
+
+                        <div class="file-upload">
+
+                            <input
+                                type="file"
+                                id="approvalDocument"
+                                name="approvalDocument"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                required>
+
+                            <label
+                                for="approvalDocument"
+                                class="file-label">
+
+                                <span class="file-icon">
+                                    ↑
+                                </span>
+
+                                <span>
+                                    Choose document
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                        <small class="file-help">
+                            Upload PDF, JPG or PNG issued by the
+                            institute head / authorized authority.
+                        </small>
+
+                        <small
+                            id="approvalDocumentError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     SECTION 03
+                ========================== -->
+
+                <div class="form-section">
+
+                    <div class="section-heading">
+
+                        <span class="section-number">
+                            03
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Verification
+                            </h2>
+
+                            <p>
+                                Verify your institute contact information.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL OTP -->
+
+                    <div class="form-group">
+
+                        <label for="emailOtp">
+                            Email OTP
+                            <span>*</span>
+                        </label>
+
+                        <div class="otp-action-row">
+
+                            <input
+                                type="text"
+                                id="emailOtp"
+                                name="emailOtp"
+                                maxlength="6"
+                                inputmode="numeric"
+                                placeholder="Enter 6-digit email OTP">
+
+                            <button
+                                type="button"
+                                class="secondary-btn"
+                                id="sendEmailOtp">
+
+                                Send OTP
+
+                            </button>
+
+                        </div>
+
+                        <small
+                            id="emailOtpError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- MOBILE OTP -->
+
+                    <div class="form-group">
+
+                        <label for="mobileOtp">
+
+                            Mobile OTP
+
+                            <em>
+                                (Only if mobile number is provided)
+                            </em>
+
+                        </label>
+
+                        <div class="otp-action-row">
+
+                            <input
+                                type="text"
+                                id="mobileOtp"
+                                name="mobileOtp"
+                                maxlength="6"
+                                inputmode="numeric"
+                                placeholder="Enter 6-digit mobile OTP">
+
+                            <button
+                                type="button"
+                                class="secondary-btn"
+                                id="sendMobileOtp">
+
+                                Send OTP
+
+                            </button>
+
+                        </div>
+
+                        <small
+                            id="mobileOtpError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- CAPTCHA -->
+
+                    <div class="form-group">
+
+                        <label for="captchaInput">
+                            CAPTCHA
+                            <span>*</span>
+                        </label>
+
+                        <div class="captcha-row">
+
+                            <div
+                                id="captchaCode"
+                                class="captcha-code">
+                            </div>
+
+                            <button
+                                type="button"
+                                id="refreshCaptcha"
+                                class="refresh-btn"
+                                aria-label="Refresh CAPTCHA">
+
+                                ↻
+
+                            </button>
+
+                        </div>
+
+                       <input
+                            type="text"
+                            id="captchaInput"
+                            name="captcha"
+                            maxlength="6"
+                            placeholder="Enter the 6-character CAPTCHA"
+                            autocomplete="off"
+                            spellcheck="false"
+                            required>
+
+                        <small
+                            id="captchaError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- TERMS -->
+
+                    <div class="terms-group">
+
+                        <label class="checkbox-label">
+
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                name="terms"
+                                required>
+
+                            <span>
+                                I confirm that the information provided
+                                is accurate and that I am authorized to
+                                register this institute.
+                            </span>
+
+                        </label>
+
+                        <small
+                            id="termsError"
+                            class="input-error">
+                        </small>
+
+                    </div>
+
+
+                    <!-- SUBMIT -->
+
+                    <button
+                        type="submit"
+                        class="submit-btn">
+
+                        Submit Registration Request
+
+                    </button>
+
+                </div>
+
+
+                <!-- =========================
+                     LOGIN
+                ========================== -->
+
+                <div class="login-redirect">
+
+                    <span>
+                        Already have an account?
+                    </span>
+
+                    <a href="../institute login/login.html">
+                        Login
+                    </a>
+
+                </div>
+
+
+            </form>
+
+        </section>
 
     </main>
 
@@ -90,16 +682,12 @@
          JAVASCRIPT
     ========================== -->
 
-    <!-- Header -->
     <script src="../../header/header.js"></script>
 
-    <!-- Sidebar -->
     <script src="../../sidebar/sidebar.js"></script>
 
-    <!-- Footer -->
     <script src="../../footer/footer.js"></script>
 
-    <!-- Register -->
     <script src="register.js"></script>
 
 
