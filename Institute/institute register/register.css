@@ -1256,3 +1256,72 @@ body::after {
     }
 
 }
+
+/* =========================
+   OTP TIMER / RESEND
+========================= */
+
+.otp-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+#otpTimer {
+    color: #607a78;
+    font-size: 13px;
+}
+
+#resendOtpBtn {
+    border: none;
+    background: #024d50;
+    color: #ffffff;
+    padding: 9px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#resendOtpBtn:hover {
+    background: #03676a;
+}
+
+#resendOtpBtn:disabled {
+    background: #aaaaaa;
+    color: #eeeeee;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   OTP VERIFIED
+========================= */
+
+.input-valid {
+    border-color: #16834b !important;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(22, 131, 75, 0.12);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .otp-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #resendOtpBtn {
+        width: 100%;
+    }
+
+}

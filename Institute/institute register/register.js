@@ -1,44 +1,64 @@
-/* =========================
+/* =====================================================
    INSTITUTE REGISTRATION
-========================= */
+   BREVO EMAIL OTP VERSION
+===================================================== */
 
 
-/* =========================
+/* =====================================================
    SUPABASE CHECK
-========================= */
+===================================================== */
 
 if (
     typeof supabaseClient === "undefined" ||
     !supabaseClient
 ) {
-
     console.error(
         "❌ Supabase client is not available."
     );
-
 }
 
 
+/* =====================================================
+   EDGE FUNCTION
+===================================================== */
 
-/* =========================
+/*
+   IMPORTANT:
+
+   Your Supabase Edge Function URL shown in your
+   dashboard is:
+
+   /functions/v1/smart-endpoint
+
+   Therefore the function name below is:
+
+   smart-endpoint
+*/
+
+const OTP_FUNCTION_NAME =
+    "smart-endpoint";
+
+
+/* =====================================================
    GLOBAL VARIABLES
-========================= */
+===================================================== */
 
 let currentCaptcha = "";
 
 let emailOtpVerified = false;
 
-let otpTimerInterval = null;
-
-let otpSeconds = 30;
+let currentOtp = "";
 
 let lastOtpEmail = "";
 
+let otpTimerInterval = null;
+
+let otpSeconds = 0;
 
 
-/* =========================
+/* =====================================================
    ERROR FUNCTIONS
-========================= */
+===================================================== */
 
 function showError(
     inputId,
@@ -76,10 +96,9 @@ function showError(
 }
 
 
-
-/* =========================
+/* =====================================================
    CLEAR ERROR
-========================= */
+===================================================== */
 
 function clearError(
     inputId,
@@ -111,10 +130,9 @@ function clearError(
 }
 
 
-
-/* =========================
+/* =====================================================
    NUMERIC ONLY
-========================= */
+===================================================== */
 
 function numericOnly(inputId) {
 
@@ -154,18 +172,17 @@ numericOnly(
 );
 
 
-
-/* =========================
+/* =====================================================
    CAPTCHA
-========================= */
+===================================================== */
 
 const CAPTCHA_CHARACTERS =
     "ABDEFGHMNPQRTabdefghmnpqrt0123456789@#";
 
 
-/* =========================
+/* =====================================================
    GENERATE CAPTCHA
-========================= */
+===================================================== */
 
 function generateCaptcha() {
 
@@ -242,10 +259,9 @@ function generateCaptcha() {
 }
 
 
-
-/* =========================
+/* =====================================================
    CAPTCHA REFRESH
-========================= */
+===================================================== */
 
 const refreshCaptcha =
     document.getElementById(
@@ -270,15 +286,9 @@ if (refreshCaptcha) {
 generateCaptcha();
 
 
-
 /* =====================================================
    OTP TIMER
 ===================================================== */
-
-
-/* =========================
-   START OTP TIMER
-========================= */
 
 function startOtpTimer() {
 
@@ -302,15 +312,33 @@ function startOtpTimer() {
         );
 
 
-    if (!timer || !resendButton) {
+    const sendButton =
+        document.getElementById(
+            "sendEmailOtp"
+        );
+
+
+    if (!timer) {
 
         return;
 
     }
 
 
-    resendButton.disabled =
-        true;
+    if (resendButton) {
+
+        resendButton.disabled =
+            true;
+
+    }
+
+
+    if (sendButton) {
+
+        sendButton.disabled =
+            true;
+
+    }
 
 
     timer.textContent =
@@ -333,20 +361,39 @@ function startOtpTimer() {
                         otpSeconds +
                         "s";
 
+                    return;
+
                 }
-                else {
-
-                    clearInterval(
-                        otpTimerInterval
-                    );
 
 
-                    timer.textContent =
-                        "You can request a new OTP";
+                clearInterval(
+                    otpTimerInterval
+                );
 
+
+                otpTimerInterval =
+                    null;
+
+
+                timer.textContent =
+                    "You can request a new OTP";
+
+
+                if (resendButton) {
 
                     resendButton.disabled =
                         false;
+
+                }
+
+
+                if (sendButton) {
+
+                    sendButton.disabled =
+                        false;
+
+                    sendButton.textContent =
+                        "Send OTP";
 
                 }
 
@@ -357,12 +404,12 @@ function startOtpTimer() {
 }
 
 
-
-/* =========================
-   SEND EMAIL OTP
-========================= */
+/* =====================================================
+   SEND OTP USING BREVO
+===================================================== */
 
 async function sendEmailOTP() {
+
 
     const emailInput =
         document.getElementById(
@@ -378,13 +425,15 @@ async function sendEmailOTP() {
 
     if (!emailInput) {
 
-        return;
+        return false;
 
     }
 
 
     const email =
-        emailInput.value.trim();
+        emailInput.value
+            .trim()
+            .toLowerCase();
 
 
     const emailPattern =
@@ -392,16 +441,17 @@ async function sendEmailOTP() {
 
 
     /* =========================
-       VALIDATE EMAIL
+       EMAIL VALIDATION
     ========================== */
 
     if (!email) {
 
         showError(
             "instituteEmail",
-            "emailError",
+            "instituteEmailError",
             "Please enter the institute email address."
         );
+
 
         emailInput.focus();
 
@@ -416,9 +466,10 @@ async function sendEmailOTP() {
 
         showError(
             "instituteEmail",
-            "emailError",
+            "instituteEmailError",
             "Please enter a valid email address."
         );
+
 
         emailInput.focus();
 
@@ -429,7 +480,7 @@ async function sendEmailOTP() {
 
     clearError(
         "instituteEmail",
-        "emailError"
+        "instituteEmailError"
     );
 
 
@@ -439,7 +490,7 @@ async function sendEmailOTP() {
 
     if (
         typeof supabaseClient ===
-        "undefined" ||
+            "undefined" ||
         !supabaseClient
     ) {
 
@@ -453,7 +504,7 @@ async function sendEmailOTP() {
 
 
     /* =========================
-       DISABLE BUTTON
+       BUTTON
     ========================== */
 
     if (sendButton) {
@@ -469,74 +520,108 @@ async function sendEmailOTP() {
 
     try {
 
+
         /* =========================
-           SEND OTP
+           CALL EDGE FUNCTION
         ========================== */
 
         const {
+            data,
             error
         } =
-            await supabaseClient.auth.signInWithOtp({
-
-                email: email,
-
-                options: {
-
-                    shouldCreateUser: true
-
+            await supabaseClient.functions.invoke(
+                OTP_FUNCTION_NAME,
+                {
+                    body: {
+                        email: email
+                    }
                 }
-
-            });
+            );
 
 
         /* =========================
-           SUPABASE ERROR
+           EDGE FUNCTION ERROR
         ========================== */
 
         if (error) {
 
             console.error(
-                "❌ Email OTP error:",
+                "❌ Edge Function error:",
                 error
             );
 
 
-            alert(
-                "Unable to send Email OTP.\n\n" +
-                error.message
+            throw new Error(
+                error.message ||
+                "Unable to contact OTP service."
             );
-
-
-            return false;
 
         }
 
 
         /* =========================
-           OTP SENT
+           FUNCTION RESPONSE
         ========================== */
 
-        emailOtpVerified =
-            false;
+        console.log(
+            "OTP function response:",
+            data
+        );
+
+
+        if (
+            !data ||
+            data.success !== true
+        ) {
+
+            throw new Error(
+                data?.message ||
+                "OTP could not be sent."
+            );
+
+        }
+
+
+        /*
+           TEMPORARY TEST VERSION:
+
+           Your current Edge Function returns:
+
+           {
+               success: true,
+               otp: "123456"
+           }
+
+           We store that value here so the
+           frontend can verify it.
+
+           We will move verification to the
+           server later for production security.
+        */
+
+        currentOtp =
+            String(
+                data.otp || ""
+            );
+
+
+        if (
+            currentOtp.length !== 6
+        ) {
+
+            throw new Error(
+                "OTP was not returned by the server."
+            );
+
+        }
 
 
         lastOtpEmail =
             email;
 
 
-        const otpSection =
-            document.getElementById(
-                "otpSection"
-            );
-
-
-        if (otpSection) {
-
-            otpSection.classList.add(
-                "otp-active"
-            );
-
-        }
+        emailOtpVerified =
+            false;
 
 
         const otpInput =
@@ -548,6 +633,10 @@ async function sendEmailOTP() {
         if (otpInput) {
 
             otpInput.value = "";
+
+            otpInput.classList.remove(
+                "input-valid"
+            );
 
             otpInput.focus();
 
@@ -574,21 +663,12 @@ async function sendEmailOTP() {
     }
     catch (error) {
 
+
         console.error(
-            "❌ Unexpected Email OTP error:",
+            "❌ OTP sending error:",
             error
         );
 
-
-        alert(
-            "Something went wrong while sending the Email OTP."
-        );
-
-
-        return false;
-
-    }
-    finally {
 
         if (sendButton) {
 
@@ -596,19 +676,27 @@ async function sendEmailOTP() {
                 false;
 
             sendButton.textContent =
-                "Send Email OTP";
+                "Send OTP";
 
         }
+
+
+        alert(
+            "Unable to send OTP.\n\n" +
+            error.message
+        );
+
+
+        return false;
 
     }
 
 }
 
 
-
-/* =========================
+/* =====================================================
    SEND OTP BUTTON
-========================= */
+===================================================== */
 
 const sendEmailOtpBtn =
     document.getElementById(
@@ -630,7 +718,6 @@ if (sendEmailOtpBtn) {
 }
 
 
-
 /* =====================================================
    RESEND OTP
 ===================================================== */
@@ -647,9 +734,6 @@ if (resendOtpBtn) {
         "click",
         async function () {
 
-            /* =========================
-               SAFETY CHECK
-            ========================== */
 
             if (
                 otpSeconds > 0
@@ -660,147 +744,8 @@ if (resendOtpBtn) {
             }
 
 
-            const email =
-                document
-                    .getElementById(
-                        "instituteEmail"
-                    )
-                    .value
-                    .trim();
+            await sendEmailOTP();
 
-
-            const emailPattern =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-            if (
-                !email ||
-                !emailPattern.test(email)
-            ) {
-
-                showError(
-                    "instituteEmail",
-                    "emailError",
-                    "Please enter a valid email address."
-                );
-
-                return;
-
-            }
-
-
-            resendOtpBtn.disabled =
-                true;
-
-            resendOtpBtn.textContent =
-                "Sending...";
-
-
-            try {
-
-                /* =========================
-                   SEND NEW OTP
-                ========================== */
-
-                const {
-                    error
-                } =
-                    await supabaseClient.auth.signInWithOtp({
-
-                        email: email,
-
-                        options: {
-
-                            shouldCreateUser: true
-
-                        }
-
-                    });
-
-
-                if (error) {
-
-                    console.error(
-                        "❌ Resend OTP error:",
-                        error
-                    );
-
-
-                    alert(
-                        "Unable to resend OTP.\n\n" +
-                        error.message
-                    );
-
-
-                    resendOtpBtn.disabled =
-                        false;
-
-                    resendOtpBtn.textContent =
-                        "Resend OTP";
-
-                    return;
-
-                }
-
-
-                emailOtpVerified =
-                    false;
-
-
-                lastOtpEmail =
-                    email;
-
-
-                const otpInput =
-                    document.getElementById(
-                        "emailOtp"
-                    );
-
-
-                if (otpInput) {
-
-                    otpInput.value = "";
-
-                    otpInput.focus();
-
-                }
-
-
-                clearError(
-                    "emailOtp",
-                    "emailOtpError"
-                );
-
-
-                startOtpTimer();
-
-
-                alert(
-                    "A new 6-digit OTP has been sent to:\n\n" +
-                    email
-                );
-
-            }
-            catch (error) {
-
-                console.error(
-                    "❌ Unexpected resend error:",
-                    error
-                );
-
-
-                alert(
-                    "Something went wrong while resending the OTP."
-                );
-
-
-                resendOtpBtn.disabled =
-                    false;
-
-                resendOtpBtn.textContent =
-                    "Resend OTP";
-
-            }
 
         }
     );
@@ -808,28 +753,40 @@ if (resendOtpBtn) {
 }
 
 
-
 /* =====================================================
-   VERIFY EMAIL OTP
+   VERIFY BREVO OTP
 ===================================================== */
 
 async function verifyEmailOtp() {
 
+
+    const emailInput =
+        document.getElementById(
+            "instituteEmail"
+        );
+
+
+    const otpInput =
+        document.getElementById(
+            "emailOtp"
+        );
+
+
+    if (!emailInput || !otpInput) {
+
+        return false;
+
+    }
+
+
     const email =
-        document
-            .getElementById(
-                "instituteEmail"
-            )
-            .value
-            .trim();
+        emailInput.value
+            .trim()
+            .toLowerCase();
 
 
     const otp =
-        document
-            .getElementById(
-                "emailOtp"
-            )
-            .value
+        otpInput.value
             .trim();
 
 
@@ -841,7 +798,7 @@ async function verifyEmailOtp() {
 
         showError(
             "instituteEmail",
-            "emailError",
+            "instituteEmailError",
             "Please enter the institute email address."
         );
 
@@ -851,7 +808,30 @@ async function verifyEmailOtp() {
 
 
     /* =========================
-       OTP CHECK
+       OTP SENT CHECK
+    ========================== */
+
+    if (
+        !lastOtpEmail ||
+        lastOtpEmail !== email
+    ) {
+
+        showError(
+            "emailOtp",
+            "emailOtpError",
+            "Please send a new OTP for this email address."
+        );
+
+        emailOtpVerified =
+            false;
+
+        return false;
+
+    }
+
+
+    /* =========================
+       OTP LENGTH
     ========================== */
 
     if (
@@ -861,8 +841,11 @@ async function verifyEmailOtp() {
         showError(
             "emailOtp",
             "emailOtpError",
-            "Please enter the complete 6-digit Email OTP."
+            "Please enter the complete 6-digit OTP."
         );
+
+        emailOtpVerified =
+            false;
 
         return false;
 
@@ -870,165 +853,96 @@ async function verifyEmailOtp() {
 
 
     /* =========================
-       SUPABASE CHECK
+       OTP COMPARISON
     ========================== */
 
     if (
-        typeof supabaseClient ===
-        "undefined" ||
-        !supabaseClient
+        otp !== currentOtp
     ) {
-
-        alert(
-            "Supabase is not initialized."
-        );
-
-        return false;
-
-    }
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.verifyOtp({
-
-                email: email,
-
-                token: otp,
-
-                type: "email"
-
-            });
-
-
-        if (error) {
-
-            console.error(
-                "❌ Email OTP verification error:",
-                error
-            );
-
-
-            emailOtpVerified =
-                false;
-
-
-            showError(
-                "emailOtp",
-                "emailOtpError",
-                "Invalid or expired Email OTP."
-            );
-
-
-            return false;
-
-        }
-
-
-        /* =========================
-           VERIFIED
-        ========================== */
-
-        emailOtpVerified =
-            true;
-
-
-        clearError(
-            "emailOtp",
-            "emailOtpError"
-        );
-
-
-        const otpInput =
-            document.getElementById(
-                "emailOtp"
-            );
-
-
-        if (otpInput) {
-
-            otpInput.classList.add(
-                "input-valid"
-            );
-
-        }
-
-
-        const timer =
-            document.getElementById(
-                "otpTimer"
-            );
-
-
-        if (timer) {
-
-            timer.textContent =
-                "Email verified successfully";
-
-        }
-
-
-        const resendButton =
-            document.getElementById(
-                "resendOtpBtn"
-            );
-
-
-        if (resendButton) {
-
-            resendButton.disabled =
-                true;
-
-        }
-
-
-        clearInterval(
-            otpTimerInterval
-        );
-
-
-        console.log(
-            "✅ Email OTP verified successfully.",
-            data
-        );
-
-
-        return true;
-
-    }
-    catch (error) {
-
-        console.error(
-            "❌ Unexpected OTP verification error:",
-            error
-        );
-
-
-        emailOtpVerified =
-            false;
-
 
         showError(
             "emailOtp",
             "emailOtpError",
-            "Unable to verify Email OTP."
+            "Incorrect OTP. Please check the email and try again."
         );
 
+        emailOtpVerified =
+            false;
 
         return false;
 
     }
 
+
+    /* =========================
+       SUCCESS
+    ========================== */
+
+    emailOtpVerified =
+        true;
+
+
+    clearError(
+        "emailOtp",
+        "emailOtpError"
+    );
+
+
+    otpInput.classList.add(
+        "input-valid"
+    );
+
+
+    const timer =
+        document.getElementById(
+            "otpTimer"
+        );
+
+
+    if (timer) {
+
+        timer.textContent =
+            "Email verified successfully";
+
+    }
+
+
+    if (resendOtpBtn) {
+
+        resendOtpBtn.disabled =
+            true;
+
+    }
+
+
+    if (sendEmailOtpBtn) {
+
+        sendEmailOtpBtn.disabled =
+            true;
+
+        sendEmailOtpBtn.textContent =
+            "Verified";
+
+    }
+
+
+    clearInterval(
+        otpTimerInterval
+    );
+
+
+    console.log(
+        "✅ Brevo Email OTP verified."
+    );
+
+
+    return true;
+
 }
 
 
-
 /* =====================================================
-   EMAIL OTP AUTO VERIFY ON CHANGE
+   OTP INPUT
 ===================================================== */
 
 const emailOtpInput =
@@ -1041,13 +955,19 @@ if (emailOtpInput) {
 
     emailOtpInput.addEventListener(
         "input",
-        function () {
+        async function () {
+
 
             this.value =
-                this.value.replace(
-                    /[^0-9]/g,
-                    ""
-                ).slice(0, 6);
+                this.value
+                    .replace(
+                        /[^0-9]/g,
+                        ""
+                    )
+                    .slice(
+                        0,
+                        6
+                    );
 
 
             clearError(
@@ -1056,16 +976,11 @@ if (emailOtpInput) {
             );
 
 
-            /*
-             * Automatically verify once
-             * all 6 digits are entered.
-             */
-
             if (
                 this.value.length === 6
             ) {
 
-                verifyEmailOtp();
+                await verifyEmailOtp();
 
             }
 
@@ -1074,6 +989,117 @@ if (emailOtpInput) {
 
 }
 
+
+/* =====================================================
+   ENSURE SUPABASE USER
+===================================================== */
+
+/*
+   We are no longer using Supabase email OTP.
+
+   However, your institutes table currently stores
+   a user_id.
+
+   Therefore we create a Supabase anonymous user
+   so the database row still receives a valid user_id.
+*/
+
+async function ensureSupabaseUser() {
+
+
+    if (
+        typeof supabaseClient ===
+            "undefined" ||
+        !supabaseClient
+    ) {
+
+        throw new Error(
+            "Supabase is not initialized."
+        );
+
+    }
+
+
+    /* =========================
+       CHECK EXISTING SESSION
+    ========================== */
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+        await supabaseClient.auth.getSession();
+
+
+    if (sessionError) {
+
+        console.error(
+            "Session error:",
+            sessionError
+        );
+
+    }
+
+
+    if (
+        sessionData &&
+        sessionData.session &&
+        sessionData.session.user
+    ) {
+
+        return (
+            sessionData
+                .session
+                .user
+        );
+
+    }
+
+
+    /* =========================
+       CREATE ANONYMOUS USER
+    ========================== */
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth
+            .signInAnonymously();
+
+
+    if (error) {
+
+        console.error(
+            "Anonymous sign-in error:",
+            error
+        );
+
+
+        throw new Error(
+            "Could not create a Supabase user.\n\n" +
+            error.message +
+            "\n\nPlease make sure Anonymous Sign-Ins are enabled in Supabase."
+        );
+
+    }
+
+
+    if (
+        !data ||
+        !data.user
+    ) {
+
+        throw new Error(
+            "Supabase did not return a user."
+        );
+
+    }
+
+
+    return data.user;
+
+}
 
 
 /* =====================================================
@@ -1088,20 +1114,22 @@ const registerForm =
 
 if (registerForm) {
 
+
     registerForm.addEventListener(
         "submit",
         async function (event) {
 
+
             event.preventDefault();
 
 
-            let isValid = true;
+            let isValid =
+                true;
 
 
-
-            /* =========================
+            /* =================================================
                USER ID
-            ========================== */
+            ================================================= */
 
             const userId =
                 document
@@ -1120,7 +1148,8 @@ if (registerForm) {
                     "Please enter a User ID."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1133,10 +1162,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                INSTITUTE TYPE
-            ========================== */
+            ================================================= */
 
             const instituteType =
                 document
@@ -1154,7 +1182,8 @@ if (registerForm) {
                     "Please select an institute type."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1167,10 +1196,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                INSTITUTE NAME
-            ========================== */
+            ================================================= */
 
             const instituteName =
                 document
@@ -1189,7 +1217,8 @@ if (registerForm) {
                     "Please enter the institute name."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1202,10 +1231,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                ADDRESS
-            ========================== */
+            ================================================= */
 
             const instituteAddress =
                 document
@@ -1224,7 +1252,8 @@ if (registerForm) {
                     "Please enter the institute address."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1237,10 +1266,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                EMAIL
-            ========================== */
+            ================================================= */
 
             const instituteEmail =
                 document
@@ -1248,7 +1276,8 @@ if (registerForm) {
                         "instituteEmail"
                     )
                     .value
-                    .trim();
+                    .trim()
+                    .toLowerCase();
 
 
             const emailPattern =
@@ -1259,11 +1288,12 @@ if (registerForm) {
 
                 showError(
                     "instituteEmail",
-                    "emailError",
+                    "instituteEmailError",
                     "Please enter the institute email address."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else if (
@@ -1274,27 +1304,65 @@ if (registerForm) {
 
                 showError(
                     "instituteEmail",
-                    "emailError",
+                    "instituteEmailError",
                     "Please enter a valid email address."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
 
                 clearError(
                     "instituteEmail",
-                    "emailError"
+                    "instituteEmailError"
                 );
 
             }
 
 
+            /* =================================================
+               MOBILE - OPTIONAL
+            ================================================= */
 
-            /* =========================
+            const instituteMobile =
+                document
+                    .getElementById(
+                        "instituteMobile"
+                    )
+                    .value
+                    .trim();
+
+
+            if (
+                instituteMobile &&
+                instituteMobile.length !== 10
+            ) {
+
+                showError(
+                    "instituteMobile",
+                    "instituteMobileError",
+                    "Please enter a valid 10-digit mobile number."
+                );
+
+                isValid =
+                    false;
+
+            }
+            else {
+
+                clearError(
+                    "instituteMobile",
+                    "instituteMobileError"
+                );
+
+            }
+
+
+            /* =================================================
                HEAD NAME
-            ========================== */
+            ================================================= */
 
             const headName =
                 document
@@ -1313,7 +1381,8 @@ if (registerForm) {
                     "Please enter the head / authorized person's name."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1326,11 +1395,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
-               APPROVAL DOCUMENT
-               OPTIONAL
-            ========================== */
+            /* =================================================
+               APPROVAL DOCUMENT - OPTIONAL
+            ================================================= */
 
             const approvalDocument =
                 document.getElementById(
@@ -1343,18 +1410,15 @@ if (registerForm) {
                 approvalDocument.files.length > 0
             ) {
 
+
                 const file =
                     approvalDocument.files[0];
 
 
                 const allowedTypes = [
-
                     "application/pdf",
-
                     "image/jpeg",
-
                     "image/png"
-
                 ];
 
 
@@ -1370,7 +1434,8 @@ if (registerForm) {
                         "Only PDF, JPG or PNG files are allowed."
                     );
 
-                    isValid = false;
+                    isValid =
+                        false;
 
                 }
                 else {
@@ -1384,7 +1449,9 @@ if (registerForm) {
 
 
                 const maxFileSize =
-                    5 * 1024 * 1024;
+                    5 *
+                    1024 *
+                    1024;
 
 
                 if (
@@ -1398,7 +1465,8 @@ if (registerForm) {
                         "File size must be 5 MB or less."
                     );
 
-                    isValid = false;
+                    isValid =
+                        false;
 
                 }
 
@@ -1406,8 +1474,8 @@ if (registerForm) {
             else {
 
                 /*
-                 * Document is optional.
-                 */
+                   Document is optional.
+                */
 
                 clearError(
                     "approvalDocument",
@@ -1417,10 +1485,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                EMAIL OTP
-            ========================== */
+            ================================================= */
 
             const emailOtp =
                 document
@@ -1436,6 +1503,7 @@ if (registerForm) {
             ) {
 
                 if (
+                    !emailOtp ||
                     emailOtp.length !== 6
                 ) {
 
@@ -1451,21 +1519,21 @@ if (registerForm) {
                     showError(
                         "emailOtp",
                         "emailOtpError",
-                        "Please wait for Email OTP verification to complete."
+                        "Please verify the Email OTP."
                     );
 
                 }
 
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
 
 
-
-            /* =========================
+            /* =================================================
                CAPTCHA
-            ========================== */
+            ================================================= */
 
             const captchaInput =
                 document
@@ -1484,7 +1552,8 @@ if (registerForm) {
                     "Please enter the CAPTCHA."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else if (
@@ -1498,7 +1567,8 @@ if (registerForm) {
                     "Incorrect CAPTCHA. Please try again."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1511,10 +1581,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                TERMS
-            ========================== */
+            ================================================= */
 
             const terms =
                 document.getElementById(
@@ -1532,7 +1601,8 @@ if (registerForm) {
                     "Please confirm the authorization statement."
                 );
 
-                isValid = false;
+                isValid =
+                    false;
 
             }
             else {
@@ -1545,10 +1615,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
+            /* =================================================
                STOP IF INVALID
-            ========================== */
+            ================================================= */
 
             if (!isValid) {
 
@@ -1557,93 +1626,9 @@ if (registerForm) {
             }
 
 
-
-            /* =========================
-               SUPABASE CHECK
-            ========================== */
-
-            if (
-                typeof supabaseClient ===
-                "undefined" ||
-                !supabaseClient
-            ) {
-
-                alert(
-                    "Supabase is not initialized. Please check your Supabase configuration."
-                );
-
-                console.error(
-                    "❌ supabaseClient is undefined."
-                );
-
-                return;
-
-            }
-
-
-
-            /* =========================
-               GET CURRENT USER
-            ========================== */
-
-            const {
-                data: sessionData
-            } =
-                await supabaseClient.auth.getSession();
-
-
-            let userIdForDatabase =
-                sessionData &&
-                sessionData.session &&
-                sessionData.session.user
-                    ? sessionData.session.user.id
-                    : null;
-
-
-            /*
-             * If the OTP verification created
-             * a Supabase session, use its user ID.
-             */
-
-            if (!userIdForDatabase) {
-
-                const {
-                    data: userData
-                } =
-                    await supabaseClient.auth.getUser();
-
-
-                if (
-                    userData &&
-                    userData.user
-                ) {
-
-                    userIdForDatabase =
-                        userData.user.id;
-
-                }
-
-            }
-
-
-            if (!userIdForDatabase) {
-
-                alert(
-                    "Email verification session was not found.\n\nPlease send a new OTP and verify your email again."
-                );
-
-                emailOtpVerified =
-                    false;
-
-                return;
-
-            }
-
-
-
-            /* =========================
+            /* =================================================
                SUBMIT BUTTON
-            ========================== */
+            ================================================= */
 
             const submitButton =
                 registerForm.querySelector(
@@ -1662,12 +1647,24 @@ if (registerForm) {
             }
 
 
-
             try {
 
-                /* =========================
+
+                /* =================================================
+                   CREATE / GET SUPABASE USER
+                ================================================= */
+
+                const user =
+                    await ensureSupabaseUser();
+
+
+                const userIdForDatabase =
+                    user.id;
+
+
+                /* =================================================
                    DATABASE INSERT
-                ========================== */
+                ================================================= */
 
                 const {
                     error
@@ -1675,7 +1672,6 @@ if (registerForm) {
                     await supabaseClient
                         .from("institutes")
                         .insert([
-
                             {
 
                                 user_id:
@@ -1693,21 +1689,23 @@ if (registerForm) {
                                 institute_email:
                                     instituteEmail,
 
+                                head_name:
+                                    headName,
+
                                 institute_mobile:
+                                    instituteMobile ||
                                     null,
 
                                 authorization_document_path:
                                     null
 
                             }
-
                         ]);
 
 
-
-                /* =========================
+                /* =================================================
                    DATABASE ERROR
-                ========================== */
+                ================================================= */
 
                 if (error) {
 
@@ -1716,6 +1714,10 @@ if (registerForm) {
                         error
                     );
 
+
+                    /* =========================
+                       DUPLICATE USER ID
+                    ========================== */
 
                     if (
                         error.code ===
@@ -1728,16 +1730,22 @@ if (registerForm) {
                             "This User ID already exists. Please choose another."
                         );
 
+
                         document
                             .getElementById(
                                 "userId"
                             )
                             .focus();
 
+
                         return;
 
                     }
 
+
+                    /* =========================
+                       RLS ERROR
+                    ========================== */
 
                     if (
                         error.code ===
@@ -1747,8 +1755,9 @@ if (registerForm) {
                         alert(
                             "Registration failed.\n\n" +
                             "Supabase Row Level Security is blocking this registration.\n\n" +
-                            "Please check the INSERT policy for the institutes table."
+                            "If Anonymous Sign-Ins are enabled, your institutes INSERT policy may also need to allow authenticated users."
                         );
+
 
                         return;
 
@@ -1760,15 +1769,15 @@ if (registerForm) {
                         error.message
                     );
 
+
                     return;
 
                 }
 
 
-
-                /* =========================
+                /* =================================================
                    SUCCESS
-                ========================== */
+                ================================================= */
 
                 console.log(
                     "✅ Institute registration submitted successfully."
@@ -1781,32 +1790,39 @@ if (registerForm) {
                 );
 
 
-                /* =========================
-                   STOP TIMER
-                ========================== */
+                /* =================================================
+                   STOP OTP TIMER
+                ================================================= */
 
                 clearInterval(
                     otpTimerInterval
                 );
 
 
-                /* =========================
+                /* =================================================
                    RESET FORM
-                ========================== */
+                ================================================= */
 
                 registerForm.reset();
 
 
-                /* =========================
+                /* =================================================
                    RESET OTP STATE
-                ========================== */
+                ================================================= */
 
                 emailOtpVerified =
                     false;
 
+                currentOtp =
+                    "";
+
                 lastOtpEmail =
                     "";
 
+
+                /* =================================================
+                   RESET OTP UI
+                ================================================= */
 
                 const timer =
                     document.getElementById(
@@ -1822,33 +1838,38 @@ if (registerForm) {
                 }
 
 
-                const resendButton =
-                    document.getElementById(
-                        "resendOtpBtn"
-                    );
+                if (sendEmailOtpBtn) {
+
+                    sendEmailOtpBtn.disabled =
+                        false;
+
+                    sendEmailOtpBtn.textContent =
+                        "Send OTP";
+
+                }
 
 
-                if (resendButton) {
+                if (resendOtpBtn) {
 
-                    resendButton.disabled =
+                    resendOtpBtn.disabled =
                         true;
 
-                    resendButton.textContent =
+                    resendOtpBtn.textContent =
                         "Resend OTP";
 
                 }
 
 
-                /* =========================
+                /* =================================================
                    NEW CAPTCHA
-                ========================== */
+                ================================================= */
 
                 generateCaptcha();
 
 
-                /* =========================
+                /* =================================================
                    CLEAR ERRORS
-                ========================== */
+                ================================================= */
 
                 const errorElements =
                     document.querySelectorAll(
@@ -1869,18 +1890,22 @@ if (registerForm) {
             }
             catch (error) {
 
+
                 console.error(
-                    "❌ Unexpected registration error:",
+                    "❌ Registration error:",
                     error
                 );
 
 
                 alert(
-                    "Something went wrong while submitting the registration."
+                    "Something went wrong while submitting the registration.\n\n" +
+                    error.message
                 );
+
 
             }
             finally {
+
 
                 if (submitButton) {
 
@@ -1894,16 +1919,16 @@ if (registerForm) {
 
             }
 
+
         }
     );
 
 }
 
 
-
-/* =========================
+/* =====================================================
    LOGIN REDIRECTION
-========================= */
+===================================================== */
 
 const loginLink =
     document.getElementById(
@@ -1919,7 +1944,6 @@ if (loginLink) {
 
             event.preventDefault();
 
-
             window.location.href =
                 "../institute login/login.html";
 
@@ -1929,11 +1953,14 @@ if (loginLink) {
 }
 
 
-
-/* =========================
+/* =====================================================
    DEBUG
-========================= */
+===================================================== */
 
 console.log(
     "✅ Institute registration JavaScript loaded."
+);
+
+console.log(
+    "✅ Brevo Email OTP system enabled."
 );
