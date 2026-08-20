@@ -90,125 +90,199 @@ fetch("../header/header.html?v=3")
         }
 
 
-        /* =========================
-           GET STARTED DROPDOWN
-        ========================= */
+/* =========================
+   GET STARTED DROPDOWN
+========================= */
 
-        const getStartedBtn =
-            document.getElementById("getStartedBtn");
+const getStartedBtn =
+    document.getElementById("getStartedBtn");
 
-        const getStartedMenu =
-            document.getElementById("getStartedMenu");
+const getStartedMenu =
+    document.getElementById("getStartedMenu");
 
-        const getStartedWrapper =
-            document.querySelector(".get-started-wrapper");
-
-
-        if (
-            getStartedBtn &&
-            getStartedMenu &&
-            getStartedWrapper
-        ) {
-
-            /* Open / Close dropdown */
-
-            getStartedBtn.addEventListener(
-                "click",
-                function (event) {
-
-                    event.stopPropagation();
-
-                    getStartedMenu.classList.toggle(
-                        "active"
-                    );
-
-                    getStartedWrapper.classList.toggle(
-                        "active"
-                    );
+const getStartedWrapper =
+    document.querySelector(".get-started-wrapper");
 
 
-                    const isOpen =
-                        getStartedMenu.classList.contains(
-                            "active"
-                        );
+if (
+    getStartedBtn &&
+    getStartedMenu &&
+    getStartedWrapper
+) {
 
+    /* =========================
+       MAIN DROPDOWN
+    ========================= */
 
-                    getStartedBtn.setAttribute(
-                        "aria-expanded",
-                        isOpen
-                    );
+    getStartedBtn.addEventListener(
+        "click",
+        function (event) {
 
-                }
+            event.stopPropagation();
+
+            getStartedMenu.classList.toggle(
+                "active"
+            );
+
+            getStartedWrapper.classList.toggle(
+                "active"
             );
 
 
-            /* =========================
-               OPTIONS
-            ========================= */
-
-            const options =
-                getStartedMenu.querySelectorAll(
-                    "button"
+            const isOpen =
+                getStartedMenu.classList.contains(
+                    "active"
                 );
 
 
-            options.forEach(option => {
-
-                option.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.stopPropagation();
-
-                        /*
-                         * Currently non-functional.
-                         * Functions will be added later.
-                         */
-
-                        console.log(
-                            "Selected:",
-                            option.textContent.trim()
-                        );
-
-                    }
-                );
-
-            });
-
-
-            /* =========================
-               CLOSE ON OUTSIDE CLICK
-            ========================= */
-
-            document.addEventListener(
-                "click",
-                function (event) {
-
-                    if (
-                        !getStartedWrapper.contains(
-                            event.target
-                        )
-                    ) {
-
-                        getStartedMenu.classList.remove(
-                            "active"
-                        );
-
-                        getStartedWrapper.classList.remove(
-                            "active"
-                        );
-
-                        getStartedBtn.setAttribute(
-                            "aria-expanded",
-                            "false"
-                        );
-
-                    }
-
-                }
+            getStartedBtn.setAttribute(
+                "aria-expanded",
+                isOpen
             );
 
         }
+    );
+
+
+    /* =========================
+       ROLE DROPDOWNS
+    ========================= */
+
+    const roleDropdowns =
+        getStartedMenu.querySelectorAll(
+            ".role-dropdown"
+        );
+
+
+    roleDropdowns.forEach(role => {
+
+        const roleButton =
+            role.querySelector(".role-btn");
+
+
+        roleButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                /* Close other roles */
+
+                roleDropdowns.forEach(
+                    otherRole => {
+
+                        if (otherRole !== role) {
+
+                            otherRole.classList.remove(
+                                "active"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                /* Toggle selected role */
+
+                role.classList.toggle(
+                    "active"
+                );
+
+            }
+        );
+
+    });
+
+
+    /* =========================
+       LOGIN / REGISTER
+       CURRENTLY NON-FUNCTIONAL
+    ========================= */
+
+    const actionButtons =
+        getStartedMenu.querySelectorAll(
+            ".role-submenu button"
+        );
+
+
+    actionButtons.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                const role =
+                    button
+                        .closest(".role-dropdown")
+                        .querySelector(".role-btn span")
+                        .textContent
+                        .trim();
+
+
+                const action =
+                    button.textContent.trim();
+
+
+                console.log(
+                    role + " - " + action
+                );
+
+            }
+        );
+
+    });
+
+
+    /* =========================
+       CLOSE ON OUTSIDE CLICK
+    ========================= */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !getStartedWrapper.contains(
+                    event.target
+                )
+            ) {
+
+                getStartedMenu.classList.remove(
+                    "active"
+                );
+
+                getStartedWrapper.classList.remove(
+                    "active"
+                );
+
+
+                getStartedBtn.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+
+                roleDropdowns.forEach(
+                    role => {
+
+                        role.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+}
 
     })
     .catch(error => {

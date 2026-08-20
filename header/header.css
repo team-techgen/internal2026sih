@@ -716,3 +716,224 @@
     }
 
 }
+
+/* =========================
+   ROLE DROPDOWNS
+========================= */
+
+.role-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+
+/* =========================
+   ROLE BUTTON
+========================= */
+
+.role-btn {
+
+    width: 100%;
+
+    min-height: 42px;
+
+    padding: 10px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #f4fffc;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+
+.role-btn:hover {
+
+    background: #216064;
+
+    color: #8ee6b8;
+
+}
+
+
+/* =========================
+   ROLE ARROW
+========================= */
+
+.role-arrow {
+
+    width: 7px;
+    height: 7px;
+
+    flex-shrink: 0;
+
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+
+    transform: rotate(-45deg);
+
+    transition:
+        transform 0.25s ease;
+
+}
+
+
+/* =========================
+   ROLE OPEN ARROW
+========================= */
+
+.role-dropdown.active .role-arrow {
+
+    transform: rotate(45deg);
+
+}
+
+
+/* =========================
+   SUBMENU
+========================= */
+
+.role-submenu {
+
+    display: none;
+
+    flex-direction: column;
+
+    margin: 0 5px 5px;
+
+    padding: 3px;
+
+    background: #063f42;
+
+    border-left: 2px solid #21966c;
+
+    border-radius: 5px;
+
+}
+
+
+/* =========================
+   SHOW SUBMENU
+========================= */
+
+.role-dropdown.active .role-submenu {
+
+    display: flex;
+
+    animation: roleMenuOpen 0.18s ease;
+
+}
+
+
+@keyframes roleMenuOpen {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(-4px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+/* =========================
+   SUBMENU BUTTON
+========================= */
+
+.role-submenu button {
+
+    width: 100%;
+
+    min-height: 38px;
+
+    padding: 8px 12px;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background: transparent;
+
+    color: #f4fffc;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+
+}
+
+
+.role-submenu button:hover {
+
+    background: #216064;
+
+    color: #8ee6b8;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 750px) {
+
+    .get-started-menu {
+
+        width: 180px;
+
+    }
+
+    .role-btn {
+
+        min-height: 44px;
+
+        font-size: 13px;
+
+    }
+
+    .role-submenu button {
+
+        min-height: 40px;
+
+        font-size: 13px;
+
+    }
+
+}
