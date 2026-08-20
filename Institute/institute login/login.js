@@ -556,14 +556,8 @@ document.getElementById(
     "click",
     function () {
 
-        /*
-         * Change this path if your
-         * register folder/file has
-         * a different name.
-         */
-
         window.location.href =
-            "../Ins%20Register/index.html";
+            "../institute%20register/register.html";
 
     }
 );

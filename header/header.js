@@ -348,87 +348,87 @@ fetch(headerHTML)
 
 
             /* =========================
-               LOGIN / REGISTER
-            ========================= */
+   LOGIN / REGISTER
+========================= */
 
-            const actionButtons =
-                getStartedMenu.querySelectorAll(
-                    ".role-submenu button"
-                );
-
-
-            actionButtons.forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        function (event) {
-
-                            event.stopPropagation();
+const actionButtons =
+    getStartedMenu.querySelectorAll(
+        ".role-submenu button"
+    );
 
 
-                            const roleElement =
-                                button
-                                    .closest(
-                                        ".role-dropdown"
-                                    )
-                                    ?.querySelector(
-                                        ".role-btn span"
-                                    );
+actionButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
 
 
-                            const role =
-                                roleElement
-                                    ?.textContent
-                                    .trim()
-                                    .toUpperCase();
+                const roleElement =
+                    button
+                        .closest(
+                            ".role-dropdown"
+                        )
+                        ?.querySelector(
+                            ".role-btn span"
+                        );
 
 
-                            const action =
-                                button.textContent
-                                    .trim();
+                const role =
+                    roleElement
+                        ?.textContent
+                        .trim()
+                        .toUpperCase();
 
 
-                            /* =========================
-                               INSTITUTE LOGIN
-                            ========================= */
-
-                            if (
-                                role === "INSTITUTE" &&
-                                action === "Login"
-                            ) {
-
-                                window.location.href =
-                                    new URL(
-                                        "Institute/institute%20login/login.html",
-                                        projectRoot
-                                    ).href;
-
-                            }
+                const action =
+                    button.textContent
+                        .trim();
 
 
-                            /* =========================
-                               INSTITUTE REGISTER
-                            ========================= */
+                /* =========================
+                   INSTITUTE LOGIN
+                ========================= */
 
-                            if (
-                                role === "INSTITUTE" &&
-                                action === "Register"
-                            ) {
+                if (
+                    role === "INSTITUTE" &&
+                    action === "Login"
+                ) {
 
-                                window.location.href =
-                                    new URL(
-                                        "Institute/institute%20register/index.html",
-                                        projectRoot
-                                    ).href;
-
-                            }
-
-                        }
-                    );
+                    window.location.href =
+                        new URL(
+                            "Institute/institute%20login/login.html",
+                            projectRoot
+                        ).href;
 
                 }
-            );
+
+
+                /* =========================
+                   INSTITUTE REGISTER
+                ========================= */
+
+                if (
+                    role === "INSTITUTE" &&
+                    action === "Register"
+                ) {
+
+                    window.location.href =
+                        new URL(
+                            "Institute/institute%20register/register.html",
+                            projectRoot
+                        ).href;
+
+                }
+
+            }
+        );
+
+    }
+);
 
 
             /* =========================
