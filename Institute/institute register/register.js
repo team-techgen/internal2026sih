@@ -7,10 +7,6 @@
    SUPABASE CHECK
 ========================= */
 
-console.log(
-    "Supabase client:",
-    supabaseClient
-);
 
 
 if (!supabaseClient) {
