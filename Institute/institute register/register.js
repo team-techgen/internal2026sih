@@ -839,129 +839,113 @@ if (registerForm) {
                AUTHORIZATION DOCUMENT
             ===================== */
 
-            const authorizationDocument =
-                document.getElementById(
-                    "authorizationDocument"
-                );
-
-
-            if (
-                !authorizationDocument ||
-                authorizationDocument.files.length === 0
-            ) {
-
-                showError(
-                    "authorizationDocument",
-                    "authorizationError",
-                    "Please upload the approval or authorization document."
-                );
-
-
-                isValid = false;
-
-            }
-            else {
-
-                clearError(
-                    "authorizationDocument",
-                    "authorizationError"
-                );
-
-
-                /*
-                   Validate file type.
-                */
-
-                const file =
-                    authorizationDocument
-                        .files[0];
-
-
-                const allowedTypes = [
-                    "application/pdf",
-                    "image/jpeg",
-                    "image/png"
-                ];
-
-
-                if (
-                    !allowedTypes.includes(
-                        file.type
-                    )
-                ) {
-
-                    showError(
-                        "authorizationDocument",
-                        "authorizationError",
-                        "Only PDF, JPG or PNG files are allowed."
-                    );
-
-
-                    isValid = false;
-
-                }
-
-
-                /*
-                   Maximum file size:
-                   5 MB
-                */
-
-                const maxFileSize =
-                    5 * 1024 * 1024;
-
-
-                if (
-                    file.size >
-                    maxFileSize
-                ) {
-
-                    showError(
-                        "authorizationDocument",
-                        "authorizationError",
-                        "File size must be 5 MB or less."
-                    );
-
-
-                    isValid = false;
-
-                }
-
-            }
-
-
             /* =====================
-               EMAIL OTP
-            ===================== */
+   AUTHORIZATION DOCUMENT
+   OPTIONAL
+   ===================== */
 
-            const emailOtp =
-                document.getElementById(
-                    "emailOtp"
-                ).value.trim();
+const authorizationDocument =
+    document.getElementById("authorizationDocument");
+
+/*
+   Approval / Authorization Document
+   is currently optional.
+
+   If a file is selected, validate its
+   type and size.
+*/
+
+if (
+    authorizationDocument &&
+    authorizationDocument.files.length > 0
+) {
+
+    const file =
+        authorizationDocument.files[0];
+
+    /* Allowed file types */
+
+    const allowedTypes = [
+        "application/pdf",
+        "image/jpeg",
+        "image/png"
+    ];
+
+    if (
+        !allowedTypes.includes(file.type)
+    ) {
+
+        showError(
+            "authorizationDocument",
+            "authorizationError",
+            "Only PDF, JPG or PNG files are allowed."
+        );
+
+        isValid = false;
+
+    }
+    else {
+
+        clearError(
+            "authorizationDocument",
+            "authorizationError"
+        );
+
+    }
 
 
-            if (
-                emailOtp.length !== 6
-            ) {
+    /* Maximum file size: 5 MB */
 
-                showError(
-                    "emailOtp",
-                    "emailOtpError",
-                    "Please enter the complete 6-digit email OTP."
-                );
+    const maxFileSize =
+        5 * 1024 * 1024;
 
+    if (
+        file.size > maxFileSize
+    ) {
 
-                isValid = false;
+        showError(
+            "authorizationDocument",
+            "authorizationError",
+            "File size must be 5 MB or less."
+        );
 
-            }
-            else {
+        isValid = false;
 
-                clearError(
-                    "emailOtp",
-                    "emailOtpError"
-                );
+    }
 
-            }
+}
+else {
+
+    /*
+       No document selected.
+       This is allowed because the document
+       is currently optional.
+    */
+
+    clearError(
+        "authorizationDocument",
+        "authorizationError"
+    );
+
+}
+
+/* =====================
+   EMAIL OTP
+   TEMPORARILY OPTIONAL
+   ===================== */
+
+const emailOtp =
+    document.getElementById("emailOtp").value.trim();
+
+/*
+   Email OTP backend is not connected yet.
+   Therefore OTP validation is temporarily skipped.
+*/
+
+clearError(
+    "emailOtp",
+    "emailOtpError"
+);
 
 
             /* =====================
