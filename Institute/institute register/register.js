@@ -95,13 +95,19 @@ function showError(
         input.classList.remove(
             "input-valid"
         );
+
     }
 
     if (error) {
 
         error.textContent =
             message;
+
+        error.style.display =
+            "block";
+
     }
+
 }
 
 
@@ -129,12 +135,18 @@ function clearError(
         input.classList.remove(
             "input-invalid"
         );
+
     }
 
     if (error) {
 
         error.textContent = "";
+
+        error.style.display =
+            "";
+
     }
+
 }
 
 
@@ -163,8 +175,10 @@ function numericOnly(inputId) {
                         /[^0-9]/g,
                         ""
                     );
+
         }
     );
+
 }
 
 
@@ -213,6 +227,7 @@ function generateCaptcha() {
                 CAPTCHA_CHARACTERS[
                     randomIndex
                 ];
+
         }
 
     }
@@ -235,6 +250,7 @@ function generateCaptcha() {
 
         captchaCode.textContent =
             currentCaptcha;
+
     }
 
 
@@ -246,6 +262,7 @@ function generateCaptcha() {
     if (captchaInput) {
 
         captchaInput.value = "";
+
     }
 
 
@@ -253,6 +270,7 @@ function generateCaptcha() {
         "captchaInput",
         "captchaError"
     );
+
 }
 
 
@@ -276,6 +294,7 @@ if (refreshCaptcha) {
 
         }
     );
+
 }
 
 
@@ -334,12 +353,17 @@ function showFormMessage(
             registerForm.prepend(
                 messageBox
             );
+
         }
+
     }
 
 
     messageBox.textContent =
         message;
+
+    messageBox.style.display =
+        "block";
 
 
     if (type === "success") {
@@ -364,7 +388,9 @@ function showFormMessage(
 
         messageBox.style.border =
             "1px solid #ef9a9a";
+
     }
+
 }
 
 
@@ -386,7 +412,250 @@ function clearFormMessage() {
 
         messageBox.style.display =
             "none";
+
     }
+
+}
+
+
+/* =====================================================
+   GET EDGE FUNCTION ERROR MESSAGE
+   IMPORTANT FOR 409 / 400 / 403 ERRORS
+===================================================== */
+
+async function getEdgeFunctionErrorMessage(
+    error,
+    fallbackMessage
+) {
+
+    /*
+       Supabase FunctionsHttpError normally
+       contains the original Response object
+       inside error.context.
+
+       We read that response so that:
+
+       409 Conflict
+
+       does NOT become only:
+
+       "Edge Function returned a non-2xx status code"
+    */
+
+    try {
+
+        if (
+            error &&
+            error.context
+        ) {
+
+            const context =
+                error.context;
+
+
+            /* =========================================
+               HTTP STATUS
+            ========================================= */
+
+            const status =
+                context.status;
+
+
+            /* =========================================
+               TRY JSON RESPONSE
+            ========================================= */
+
+            if (
+                typeof context.clone ===
+                "function"
+            ) {
+
+                try {
+
+                    const response =
+                        context.clone();
+
+                    const responseData =
+                        await response.json();
+
+                    if (
+                        responseData &&
+                        responseData.message
+                    ) {
+
+                        return {
+                            status:
+                                status,
+
+                            message:
+                                String(
+                                    responseData.message
+                                )
+                        };
+
+                    }
+
+                }
+                catch (jsonError) {
+
+                    console.warn(
+                        "Could not parse Edge Function JSON response:",
+                        jsonError
+                    );
+
+                }
+
+
+                /* =====================================
+                   TRY TEXT RESPONSE
+                ===================================== */
+
+                try {
+
+                    const response =
+                        context.clone();
+
+                    const responseText =
+                        await response.text();
+
+                    if (responseText) {
+
+                        try {
+
+                            const parsed =
+                                JSON.parse(
+                                    responseText
+                                );
+
+                            if (
+                                parsed &&
+                                parsed.message
+                            ) {
+
+                                return {
+                                    status:
+                                        status,
+
+                                    message:
+                                        String(
+                                            parsed.message
+                                        )
+                                };
+
+                            }
+
+                        }
+                        catch (parseError) {
+
+                            /*
+                               Response was not JSON.
+                               Use plain text if available.
+                            */
+
+                            return {
+                                status:
+                                    status,
+
+                                message:
+                                    responseText
+                            };
+
+                        }
+
+                    }
+
+                }
+                catch (textError) {
+
+                    console.warn(
+                        "Could not read Edge Function response:",
+                        textError
+                    );
+
+                }
+
+            }
+
+
+            /* =========================================
+               STATUS-BASED FALLBACK
+            ========================================= */
+
+            if (
+                status === 409
+            ) {
+
+                return {
+                    status:
+                        409,
+
+                    message:
+                        "Email already registered. Please login."
+                };
+
+            }
+
+        }
+
+    }
+    catch (errorReadingResponse) {
+
+        console.warn(
+            "Unable to read Edge Function error response:",
+            errorReadingResponse
+        );
+
+    }
+
+
+    /* =============================================
+       CHECK ERROR MESSAGE ITSELF
+    ============================================= */
+
+    const rawMessage =
+        error?.message
+            ? String(
+                error.message
+            )
+            : "";
+
+
+    const lowerMessage =
+        rawMessage.toLowerCase();
+
+
+    if (
+        lowerMessage.includes(
+            "already registered"
+        ) ||
+        lowerMessage.includes(
+            "institute email"
+        ) &&
+        lowerMessage.includes(
+            "already"
+        )
+    ) {
+
+        return {
+            status:
+                409,
+
+            message:
+                "Email already registered. Please login."
+        };
+
+    }
+
+
+    return {
+        status:
+            null,
+
+        message:
+            rawMessage ||
+            fallbackMessage
+    };
+
 }
 
 
@@ -426,6 +695,7 @@ function startOtpTimer() {
 
         sendButton.textContent =
             "OTP Sent";
+
     }
 
 
@@ -433,6 +703,7 @@ function startOtpTimer() {
 
         resendButton.disabled =
             true;
+
     }
 
 
@@ -440,6 +711,7 @@ function startOtpTimer() {
 
         timer.textContent =
             "Resend OTP in 30s";
+
     }
 
 
@@ -460,9 +732,11 @@ function startOtpTimer() {
                             "Resend OTP in " +
                             otpSeconds +
                             "s";
+
                     }
 
                     return;
+
                 }
 
 
@@ -478,6 +752,7 @@ function startOtpTimer() {
 
                     timer.textContent =
                         "You can request a new OTP";
+
                 }
 
 
@@ -488,6 +763,7 @@ function startOtpTimer() {
 
                     sendButton.textContent =
                         "Send OTP";
+
                 }
 
 
@@ -495,11 +771,13 @@ function startOtpTimer() {
 
                     resendButton.disabled =
                         false;
+
                 }
 
             },
             1000
         );
+
 }
 
 
@@ -526,7 +804,6 @@ async function sendEmailOTP() {
 
 
     if (!emailInput) {
-
         return false;
     }
 
@@ -550,6 +827,7 @@ async function sendEmailOTP() {
     ) {
 
         return false;
+
     }
 
 
@@ -568,6 +846,7 @@ async function sendEmailOTP() {
         emailInput.focus();
 
         return false;
+
     }
 
 
@@ -586,6 +865,7 @@ async function sendEmailOTP() {
         emailInput.focus();
 
         return false;
+
     }
 
 
@@ -611,6 +891,7 @@ async function sendEmailOTP() {
         );
 
         return false;
+
     }
 
 
@@ -632,6 +913,7 @@ async function sendEmailOTP() {
         otpInput.classList.remove(
             "input-valid"
         );
+
     }
 
 
@@ -652,6 +934,7 @@ async function sendEmailOTP() {
 
         sendButton.textContent =
             "Sending...";
+
     }
 
 
@@ -686,10 +969,16 @@ async function sendEmailOTP() {
                 error
             );
 
+            const edgeError =
+                await getEdgeFunctionErrorMessage(
+                    error,
+                    "Unable to contact OTP service."
+                );
+
             throw new Error(
-                error.message ||
-                "Unable to contact OTP service."
+                edgeError.message
             );
+
         }
 
 
@@ -712,6 +1001,7 @@ async function sendEmailOTP() {
                 data?.message ||
                 "OTP could not be sent."
             );
+
         }
 
 
@@ -746,6 +1036,7 @@ async function sendEmailOTP() {
             );
 
             otpInput.focus();
+
         }
 
 
@@ -789,11 +1080,14 @@ async function sendEmailOTP() {
 
             sendButton.textContent =
                 "Send OTP";
+
         }
 
 
         return false;
+
     }
+
 }
 
 
@@ -817,6 +1111,7 @@ if (sendEmailOtpBtn) {
 
         }
     );
+
 }
 
 
@@ -841,6 +1136,7 @@ if (resendOtpBtn) {
             ) {
 
                 return;
+
             }
 
 
@@ -848,6 +1144,7 @@ if (resendOtpBtn) {
 
         }
     );
+
 }
 
 
@@ -874,6 +1171,7 @@ async function verifyEmailOtp() {
     ) {
 
         return false;
+
     }
 
 
@@ -897,6 +1195,7 @@ async function verifyEmailOtp() {
     ) {
 
         return false;
+
     }
 
 
@@ -905,6 +1204,7 @@ async function verifyEmailOtp() {
     ) {
 
         return true;
+
     }
 
 
@@ -921,6 +1221,7 @@ async function verifyEmailOtp() {
         );
 
         return false;
+
     }
 
 
@@ -943,6 +1244,7 @@ async function verifyEmailOtp() {
             false;
 
         return false;
+
     }
 
 
@@ -966,6 +1268,7 @@ async function verifyEmailOtp() {
             false;
 
         return false;
+
     }
 
 
@@ -985,6 +1288,7 @@ async function verifyEmailOtp() {
         );
 
         return false;
+
     }
 
 
@@ -1020,10 +1324,18 @@ async function verifyEmailOtp() {
                 error
             );
 
+
+            const edgeError =
+                await getEdgeFunctionErrorMessage(
+                    error,
+                    "Unable to verify OTP."
+                );
+
+
             throw new Error(
-                error.message ||
-                "Unable to verify OTP."
+                edgeError.message
             );
+
         }
 
 
@@ -1043,6 +1355,7 @@ async function verifyEmailOtp() {
                 data?.message ||
                 "Incorrect or expired OTP."
             );
+
         }
 
 
@@ -1075,6 +1388,7 @@ async function verifyEmailOtp() {
 
             timer.textContent =
                 "Email verified successfully";
+
         }
 
 
@@ -1082,6 +1396,7 @@ async function verifyEmailOtp() {
 
             resendOtpBtn.disabled =
                 true;
+
         }
 
 
@@ -1092,6 +1407,7 @@ async function verifyEmailOtp() {
 
             sendEmailOtpBtn.textContent =
                 "Verified";
+
         }
 
 
@@ -1141,7 +1457,9 @@ async function verifyEmailOtp() {
 
         otpVerificationInProgress =
             false;
+
     }
+
 }
 
 
@@ -1185,10 +1503,12 @@ if (emailOtpInput) {
             ) {
 
                 await verifyEmailOtp();
+
             }
 
         }
     );
+
 }
 
 
@@ -1238,6 +1558,7 @@ if (instituteEmailInput) {
                     otpInput.classList.remove(
                         "input-valid"
                     );
+
                 }
 
 
@@ -1248,6 +1569,7 @@ if (instituteEmailInput) {
 
                     sendEmailOtpBtn.textContent =
                         "Send OTP";
+
                 }
 
 
@@ -1272,12 +1594,14 @@ if (instituteEmailInput) {
 
                     timer.textContent =
                         "Email changed. Send a new OTP";
+
                 }
 
             }
 
         }
     );
+
 }
 
 
@@ -1341,6 +1665,7 @@ if (registerForm) {
                     "userId",
                     "userIdError"
                 );
+
             }
 
 
@@ -1378,6 +1703,7 @@ if (registerForm) {
                     "instituteType",
                     "instituteTypeError"
                 );
+
             }
 
 
@@ -1415,6 +1741,7 @@ if (registerForm) {
                     "instituteName",
                     "instituteNameError"
                 );
+
             }
 
 
@@ -1452,6 +1779,7 @@ if (registerForm) {
                     "instituteAddress",
                     "instituteAddressError"
                 );
+
             }
 
 
@@ -1511,6 +1839,7 @@ if (registerForm) {
                     "instituteEmail",
                     "instituteEmailError"
                 );
+
             }
 
 
@@ -1551,6 +1880,7 @@ if (registerForm) {
                     "instituteMobile",
                     "instituteMobileError"
                 );
+
             }
 
 
@@ -1588,6 +1918,7 @@ if (registerForm) {
                     "headName",
                     "headNameError"
                 );
+
             }
 
 
@@ -1641,6 +1972,7 @@ if (registerForm) {
                         "approvalDocument",
                         "approvalDocumentError"
                     );
+
                 }
 
 
@@ -1663,6 +1995,7 @@ if (registerForm) {
 
                     isValid =
                         false;
+
                 }
 
             }
@@ -1672,6 +2005,7 @@ if (registerForm) {
                     "approvalDocument",
                     "approvalDocumentError"
                 );
+
             }
 
 
@@ -1714,11 +2048,13 @@ if (registerForm) {
                         "emailOtpError",
                         "Please verify the Email OTP."
                     );
+
                 }
 
 
                 isValid =
                     false;
+
             }
 
 
@@ -1771,6 +2107,7 @@ if (registerForm) {
                     "captchaInput",
                     "captchaError"
                 );
+
             }
 
 
@@ -1805,6 +2142,7 @@ if (registerForm) {
                     "terms",
                     "termsError"
                 );
+
             }
 
 
@@ -1815,6 +2153,7 @@ if (registerForm) {
             if (!isValid) {
 
                 return;
+
             }
 
 
@@ -1832,6 +2171,7 @@ if (registerForm) {
                 );
 
                 return;
+
             }
 
 
@@ -1855,6 +2195,7 @@ if (registerForm) {
                 );
 
                 return;
+
             }
 
 
@@ -1875,6 +2216,7 @@ if (registerForm) {
 
                 submitButton.textContent =
                     "Submitting...";
+
             }
 
 
@@ -1930,6 +2272,7 @@ if (registerForm) {
 
                                 authorizationDocumentPath:
                                     null
+
                             }
                         }
                     );
@@ -1937,6 +2280,14 @@ if (registerForm) {
 
                 /* =====================================
                    EDGE FUNCTION ERROR
+
+                   IMPORTANT FIX:
+
+                   Supabase returns a FunctionsHttpError
+                   for HTTP 409.
+
+                   We now read the actual response
+                   returned by register-institute.
                 ===================================== */
 
                 if (error) {
@@ -1946,10 +2297,102 @@ if (registerForm) {
                         error
                     );
 
+
+                    const edgeError =
+                        await getEdgeFunctionErrorMessage(
+                            error,
+                            "Registration request failed."
+                        );
+
+
+                    console.error(
+                        "Registration server response:",
+                        edgeError
+                    );
+
+
+                    /* =================================
+                       EMAIL ALREADY REGISTERED
+                    ================================= */
+
+                    if (
+                        edgeError.status === 409 ||
+                        String(
+                            edgeError.message || ""
+                        )
+                            .toLowerCase()
+                            .includes(
+                                "email already registered"
+                            ) ||
+                        String(
+                            edgeError.message || ""
+                        )
+                            .toLowerCase()
+                            .includes(
+                                "institute email is already registered"
+                            )
+                    ) {
+
+                        showError(
+                            "instituteEmail",
+                            "instituteEmailError",
+                            "Email already registered. Please login."
+                        );
+
+
+                        showFormMessage(
+                            "Email already registered. Please login."
+                        );
+
+
+                        /*
+                           Keep the form open.
+
+                           DO NOT reset the form.
+                        */
+
+                        if (
+                            instituteEmailElement
+                        ) {
+
+                            instituteEmailElement.focus();
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    /* =================================
+                       OTHER CONFLICT
+                    ================================= */
+
+                    if (
+                        edgeError.status === 409
+                    ) {
+
+                        showFormMessage(
+                            edgeError.message ||
+                            "This registration already exists."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    /* =================================
+                       OTHER SERVER ERROR
+                    ================================= */
+
                     throw new Error(
-                        error.message ||
+                        edgeError.message ||
                         "Registration request failed."
                     );
+
                 }
 
 
@@ -1968,10 +2411,55 @@ if (registerForm) {
                     data.success !== true
                 ) {
 
-                    throw new Error(
+                    const serverMessage =
                         data?.message ||
-                        "Registration could not be completed."
+                        "Registration could not be completed.";
+
+
+                    /*
+                       Handle duplicate email even if
+                       the function returns HTTP 200
+                       with success:false.
+                    */
+
+                    if (
+                        String(
+                            serverMessage
+                        )
+                            .toLowerCase()
+                            .includes(
+                                "already registered"
+                            ) &&
+                        String(
+                            serverMessage
+                        )
+                            .toLowerCase()
+                            .includes(
+                                "email"
+                            )
+                    ) {
+
+                        showError(
+                            "instituteEmail",
+                            "instituteEmailError",
+                            "Email already registered. Please login."
+                        );
+
+
+                        showFormMessage(
+                            "Email already registered. Please login."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    throw new Error(
+                        serverMessage
                     );
+
                 }
 
 
@@ -2041,6 +2529,7 @@ if (registerForm) {
 
                     timer.textContent =
                         "Send OTP to start verification";
+
                 }
 
 
@@ -2051,6 +2540,7 @@ if (registerForm) {
 
                     sendEmailOtpBtn.textContent =
                         "Send OTP";
+
                 }
 
 
@@ -2061,6 +2551,7 @@ if (registerForm) {
 
                     resendOtpBtn.textContent =
                         "Resend OTP";
+
                 }
 
 
@@ -2086,6 +2577,7 @@ if (registerForm) {
 
                         error.textContent =
                             "";
+
                     }
                 );
 
@@ -2093,7 +2585,6 @@ if (registerForm) {
                 /*
                    Keep success message visible.
                 */
-
 
             }
             catch (error) {
@@ -2104,8 +2595,60 @@ if (registerForm) {
                 );
 
 
+                /*
+                   FINAL SAFETY CHECK
+
+                   If the error somehow reaches this
+                   catch block with a duplicate-email
+                   message, show the friendly message
+                   instead of the raw Supabase error.
+                */
+
+                const errorMessage =
+                    error?.message
+                        ? String(
+                            error.message
+                        )
+                        : "";
+
+
+                const lowerErrorMessage =
+                    errorMessage.toLowerCase();
+
+
+                if (
+                    lowerErrorMessage.includes(
+                        "already registered"
+                    ) ||
+                    (
+                        lowerErrorMessage.includes(
+                            "email"
+                        ) &&
+                        lowerErrorMessage.includes(
+                            "already"
+                        )
+                    )
+                ) {
+
+                    showError(
+                        "instituteEmail",
+                        "instituteEmailError",
+                        "Email already registered. Please login."
+                    );
+
+
+                    showFormMessage(
+                        "Email already registered. Please login."
+                    );
+
+
+                    return;
+
+                }
+
+
                 showFormMessage(
-                    error?.message ||
+                    errorMessage ||
                     "Something went wrong while submitting the registration."
                 );
 
@@ -2119,11 +2662,14 @@ if (registerForm) {
 
                     submitButton.textContent =
                         "Submit Registration Request";
+
                 }
+
             }
 
         }
     );
+
 }
 
 
@@ -2151,6 +2697,7 @@ if (loginLink) {
 
         }
     );
+
 }
 
 
@@ -2179,4 +2726,8 @@ console.log(
 
 console.log(
     "✅ Anonymous Supabase sign-in disabled."
+);
+
+console.log(
+    "✅ Duplicate email handling enabled."
 );
