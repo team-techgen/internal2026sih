@@ -401,7 +401,485 @@ function showFormMessage(
     }
 
 }
+/* =====================================================
+   PROFESSIONAL POPUP
+===================================================== */
 
+function showProfessionalPopup(
+    title,
+    message,
+    type = "success"
+) {
+
+    /* Remove existing popup */
+    const existingPopup =
+        document.getElementById(
+            "professionalPopup"
+        );
+
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+
+    /* =========================================
+       OVERLAY
+    ========================================= */
+
+    const overlay =
+        document.createElement("div");
+
+    overlay.id =
+        "professionalPopup";
+
+
+    overlay.innerHTML = `
+
+        <div class="professional-popup-card">
+
+            <button
+                type="button"
+                class="professional-popup-close"
+                id="professionalPopupClose"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+
+
+            <div
+                class="professional-popup-icon
+                ${type === "success"
+                    ? "popup-success"
+                    : "popup-error"}"
+            >
+
+                ${
+                    type === "success"
+                        ? "✓"
+                        : "!"
+                }
+
+            </div>
+
+
+            <h2 class="professional-popup-title">
+                ${title}
+            </h2>
+
+
+            <p class="professional-popup-message">
+                ${message}
+            </p>
+
+
+            <button
+                type="button"
+                class="professional-popup-button"
+                id="professionalPopupOk"
+            >
+                OK
+            </button>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    /* =========================================
+       POPUP CSS
+    ========================================= */
+
+    if (
+        !document.getElementById(
+            "professionalPopupStyles"
+        )
+    ) {
+
+        const style =
+            document.createElement("style");
+
+
+        style.id =
+            "professionalPopupStyles";
+
+
+        style.textContent = `
+
+            #professionalPopup {
+
+                position: fixed;
+
+                inset: 0;
+
+                width: 100%;
+                height: 100%;
+
+                background:
+                    rgba(4, 43, 45, 0.48);
+
+                backdrop-filter:
+                    blur(5px);
+
+                -webkit-backdrop-filter:
+                    blur(5px);
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+                padding: 20px;
+
+                box-sizing: border-box;
+
+                z-index: 99999;
+
+                animation:
+                    popupOverlayIn
+                    0.2s ease;
+
+            }
+
+
+            .professional-popup-card {
+
+                width: min(
+                    460px,
+                    100%
+                );
+
+                background: #ffffff;
+
+                border-radius: 20px;
+
+                padding: 34px 30px 30px;
+
+                text-align: center;
+
+                position: relative;
+
+                box-sizing: border-box;
+
+                box-shadow:
+                    0 25px 70px
+                    rgba(0, 0, 0, 0.22);
+
+                animation:
+                    popupCardIn
+                    0.28s ease;
+
+            }
+
+
+            .professional-popup-close {
+
+                position: absolute;
+
+                top: 12px;
+
+                right: 14px;
+
+                width: 36px;
+
+                height: 36px;
+
+                border: none;
+
+                background:
+                    transparent;
+
+                color: #6b7f80;
+
+                font-size: 28px;
+
+                line-height: 36px;
+
+                cursor: pointer;
+
+                border-radius: 50%;
+
+            }
+
+
+            .professional-popup-close:hover {
+
+                background: #f1f6f5;
+
+                color: #024d50;
+
+            }
+
+
+            .professional-popup-icon {
+
+                width: 72px;
+
+                height: 72px;
+
+                border-radius: 50%;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+                margin: 0 auto 20px;
+
+                font-size: 38px;
+
+                font-weight: 700;
+
+            }
+
+
+            .popup-success {
+
+                background: #e4f7ef;
+
+                color: #129267;
+
+                border: 1px solid #b9e8d4;
+
+            }
+
+
+            .popup-error {
+
+                background: #fff0f0;
+
+                color: #d73535;
+
+                border: 1px solid #f2bcbc;
+
+            }
+
+
+            .professional-popup-title {
+
+                margin: 0 0 10px;
+
+                color: #064f52;
+
+                font-size: 24px;
+
+                font-weight: 700;
+
+            }
+
+
+            .professional-popup-message {
+
+                margin: 0 auto 25px;
+
+                max-width: 390px;
+
+                color: #607879;
+
+                font-size: 15px;
+
+                line-height: 1.6;
+
+            }
+
+
+            .professional-popup-button {
+
+                width: 100%;
+
+                max-width: 180px;
+
+                border: none;
+
+                border-radius: 10px;
+
+                padding: 13px 24px;
+
+                background: #15966f;
+
+                color: #ffffff;
+
+                font-size: 15px;
+
+                font-weight: 700;
+
+                cursor: pointer;
+
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+
+            }
+
+
+            .professional-popup-button:hover {
+
+                transform:
+                    translateY(-1px);
+
+                box-shadow:
+                    0 7px 18px
+                    rgba(21, 150, 111, 0.25);
+
+            }
+
+
+            @keyframes popupOverlayIn {
+
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+
+            }
+
+
+            @keyframes popupCardIn {
+
+                from {
+
+                    opacity: 0;
+
+                    transform:
+                        translateY(15px)
+                        scale(0.96);
+
+                }
+
+                to {
+
+                    opacity: 1;
+
+                    transform:
+                        translateY(0)
+                        scale(1);
+
+                }
+
+            }
+
+
+            @media (max-width: 480px) {
+
+                .professional-popup-card {
+
+                    padding:
+                        30px 20px 24px;
+
+                    border-radius:
+                        17px;
+
+                }
+
+
+                .professional-popup-title {
+
+                    font-size:
+                        21px;
+
+                }
+
+
+                .professional-popup-message {
+
+                    font-size:
+                        14px;
+
+                }
+
+            }
+
+        `;
+
+
+        document.head.appendChild(
+            style
+        );
+
+    }
+
+
+    /* =========================================
+       CLOSE FUNCTIONS
+    ========================================= */
+
+    function closePopup() {
+
+        const popup =
+            document.getElementById(
+                "professionalPopup"
+            );
+
+        if (popup) {
+
+            popup.remove();
+
+        }
+
+    }
+
+
+    const closeButton =
+        document.getElementById(
+            "professionalPopupClose"
+        );
+
+
+    const okButton =
+        document.getElementById(
+            "professionalPopupOk"
+        );
+
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            closePopup
+        );
+
+    }
+
+
+    if (okButton) {
+
+        okButton.addEventListener(
+            "click",
+            closePopup
+        );
+
+    }
+
+
+    /* Close only when clicking outside card */
+
+    overlay.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                overlay
+            ) {
+
+                closePopup();
+
+            }
+
+        }
+    );
+
+}
 
 /* =====================================================
    CLEAR FORM MESSAGE
@@ -1038,19 +1516,33 @@ async function verifyEmailOtp() {
 
         if (error) {
 
-            console.error(
-                "❌ verify-otp Edge Function error:",
-                error
-            );
+    console.error(
+        "❌ verify-otp Edge Function error:",
+        error
+    );
 
 
-            throw new Error(
-                error.message ||
-                "Unable to verify OTP."
-            );
+    emailOtpVerified =
+        false;
 
-        }
 
+    showError(
+        "emailOtp",
+        "emailOtpError",
+        "Invalid OTP. Please enter the correct OTP."
+    );
+
+
+    showProfessionalPopup(
+        "Invalid OTP",
+        "The OTP you entered is incorrect or has expired. Please enter the correct OTP.",
+        "error"
+    );
+
+
+    return false;
+
+}
 
         console.log(
             "OTP verification response:",
@@ -1059,17 +1551,32 @@ async function verifyEmailOtp() {
 
 
         if (
-            !data ||
-            data.success !== true ||
-            data.verified !== true
-        ) {
+    !data ||
+    data.success !== true ||
+    data.verified !== true
+) {
 
-            throw new Error(
-                data?.message ||
-                "Incorrect or expired OTP."
-            );
+    emailOtpVerified =
+        false;
 
-        }
+
+    showError(
+        "emailOtp",
+        "emailOtpError",
+        "Invalid OTP. Please enter the correct OTP."
+    );
+
+
+    showProfessionalPopup(
+        "Invalid OTP",
+        "The OTP you entered is incorrect or has expired. Please enter the correct OTP.",
+        "error"
+    );
+
+
+    return false;
+
+}
 
 
         emailOtpVerified =
@@ -2082,26 +2589,82 @@ if (registerForm) {
                FINAL EMAIL / OTP CHECK
             ========================================= */
 
-            if (
-                lastOtpEmail !==
-                instituteEmail
-            ) {
+            /* =========================================
+   FINAL OTP VERIFICATION CHECK
+========================================= */
 
-                emailOtpVerified =
-                    false;
+/*
+   NEVER allow registration unless the OTP
+   has actually been verified successfully.
+*/
+
+if (
+    !emailOtpVerified
+) {
+
+    showError(
+        "emailOtp",
+        "emailOtpError",
+        "Please verify your email OTP before submitting."
+    );
 
 
-                showError(
-                    "emailOtp",
-                    "emailOtpError",
-                    "Email was changed. Please verify the new email address."
-                );
+    showProfessionalPopup(
+        "Email Verification Required",
+        "Please enter the OTP sent to your institute email and verify it before submitting the registration.",
+        "error"
+    );
 
 
-                return;
+    const otpInput =
+        document.getElementById(
+            "emailOtp"
+        );
 
-            }
 
+    if (otpInput) {
+
+        otpInput.focus();
+
+    }
+
+
+    return;
+
+}
+
+
+/* =========================================
+   EMAIL MUST MATCH OTP EMAIL
+========================================= */
+
+if (
+    !lastOtpEmail ||
+    lastOtpEmail !==
+    instituteEmail
+) {
+
+    emailOtpVerified =
+        false;
+
+
+    showError(
+        "emailOtp",
+        "emailOtpError",
+        "Email was changed. Please send and verify a new OTP."
+    );
+
+
+    showProfessionalPopup(
+        "Email Verification Required",
+        "The email address was changed after the OTP was sent. Please send a new OTP and verify it.",
+        "error"
+    );
+
+
+    return;
+
+}
 
             /* =========================================
                SUBMIT BUTTON
