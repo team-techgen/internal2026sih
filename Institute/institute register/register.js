@@ -3,35 +3,27 @@
    SECURE BREVO OTP VERSION
    ===================================================== */
 
-/*
-   REQUIRED GLOBAL:
 
-   supabaseClient
+/* =====================================================
+   REQUIRED GLOBAL
 
-   This must already be created by:
+   supabaseClient must be created by:
    supabase-config.js
 
    Required Edge Functions:
-
    1. send-otp
    2. verify-otp
    3. register-institute
-*/
-
-
-/* =====================================================
-   SUPABASE CHECK
 ===================================================== */
+
 
 if (
     typeof supabaseClient === "undefined" ||
     !supabaseClient
 ) {
-
     console.error(
         "❌ Supabase client is not available."
     );
-
 }
 
 
@@ -86,6 +78,7 @@ function showError(
             errorId
         );
 
+
     if (input) {
 
         input.classList.add(
@@ -97,6 +90,7 @@ function showError(
         );
 
     }
+
 
     if (error) {
 
@@ -130,6 +124,7 @@ function clearError(
             errorId
         );
 
+
     if (input) {
 
         input.classList.remove(
@@ -138,9 +133,11 @@ function clearError(
 
     }
 
+
     if (error) {
 
-        error.textContent = "";
+        error.textContent =
+            "";
 
         error.style.display =
             "";
@@ -154,16 +151,20 @@ function clearError(
    NUMERIC ONLY
 ===================================================== */
 
-function numericOnly(inputId) {
+function numericOnly(
+    inputId
+) {
 
     const input =
         document.getElementById(
             inputId
         );
 
+
     if (!input) {
         return;
     }
+
 
     input.addEventListener(
         "input",
@@ -199,17 +200,15 @@ const CAPTCHA_CHARACTERS =
     "ABDEFGHMNPQRTabdefghmnpqrt0123456789";
 
 
-/* =====================================================
-   GENERATE CAPTCHA
-===================================================== */
-
 function generateCaptcha() {
 
     let newCaptcha = "";
 
+
     do {
 
         newCaptcha = "";
+
 
         for (
             let i = 0;
@@ -222,6 +221,7 @@ function generateCaptcha() {
                     Math.random() *
                     CAPTCHA_CHARACTERS.length
                 );
+
 
             newCaptcha +=
                 CAPTCHA_CHARACTERS[
@@ -246,6 +246,7 @@ function generateCaptcha() {
             "captchaCode"
         );
 
+
     if (captchaCode) {
 
         captchaCode.textContent =
@@ -259,9 +260,11 @@ function generateCaptcha() {
             "captchaInput"
         );
 
+
     if (captchaInput) {
 
-        captchaInput.value = "";
+        captchaInput.value =
+            "";
 
     }
 
@@ -273,10 +276,6 @@ function generateCaptcha() {
 
 }
 
-
-/* =====================================================
-   CAPTCHA REFRESH
-===================================================== */
 
 const refreshCaptcha =
     document.getElementById(
@@ -303,7 +302,6 @@ generateCaptcha();
 
 /* =====================================================
    FORM MESSAGE
-   NO POPUP
 ===================================================== */
 
 function showFormMessage(
@@ -316,6 +314,7 @@ function showFormMessage(
             "registrationMessage"
         );
 
+
     if (!messageBox) {
 
         messageBox =
@@ -323,8 +322,10 @@ function showFormMessage(
                 "div"
             );
 
+
         messageBox.id =
             "registrationMessage";
+
 
         messageBox.style.width =
             "100%";
@@ -348,7 +349,11 @@ function showFormMessage(
             "border-box";
 
 
-        if (registerForm) {
+        if (
+            typeof registerForm !==
+            "undefined" &&
+            registerForm
+        ) {
 
             registerForm.prepend(
                 messageBox
@@ -362,11 +367,15 @@ function showFormMessage(
     messageBox.textContent =
         message;
 
+
     messageBox.style.display =
         "block";
 
 
-    if (type === "success") {
+    if (
+        type ===
+        "success"
+    ) {
 
         messageBox.style.background =
             "#e7f8f1";
@@ -405,6 +414,7 @@ function clearFormMessage() {
             "registrationMessage"
         );
 
+
     if (messageBox) {
 
         messageBox.textContent =
@@ -419,247 +429,6 @@ function clearFormMessage() {
 
 
 /* =====================================================
-   GET EDGE FUNCTION ERROR MESSAGE
-   IMPORTANT FOR 409 / 400 / 403 ERRORS
-===================================================== */
-
-async function getEdgeFunctionErrorMessage(
-    error,
-    fallbackMessage
-) {
-
-    /*
-       Supabase FunctionsHttpError normally
-       contains the original Response object
-       inside error.context.
-
-       We read that response so that:
-
-       409 Conflict
-
-       does NOT become only:
-
-       "Edge Function returned a non-2xx status code"
-    */
-
-    try {
-
-        if (
-            error &&
-            error.context
-        ) {
-
-            const context =
-                error.context;
-
-
-            /* =========================================
-               HTTP STATUS
-            ========================================= */
-
-            const status =
-                context.status;
-
-
-            /* =========================================
-               TRY JSON RESPONSE
-            ========================================= */
-
-            if (
-                typeof context.clone ===
-                "function"
-            ) {
-
-                try {
-
-                    const response =
-                        context.clone();
-
-                    const responseData =
-                        await response.json();
-
-                    if (
-                        responseData &&
-                        responseData.message
-                    ) {
-
-                        return {
-                            status:
-                                status,
-
-                            message:
-                                String(
-                                    responseData.message
-                                )
-                        };
-
-                    }
-
-                }
-                catch (jsonError) {
-
-                    console.warn(
-                        "Could not parse Edge Function JSON response:",
-                        jsonError
-                    );
-
-                }
-
-
-                /* =====================================
-                   TRY TEXT RESPONSE
-                ===================================== */
-
-                try {
-
-                    const response =
-                        context.clone();
-
-                    const responseText =
-                        await response.text();
-
-                    if (responseText) {
-
-                        try {
-
-                            const parsed =
-                                JSON.parse(
-                                    responseText
-                                );
-
-                            if (
-                                parsed &&
-                                parsed.message
-                            ) {
-
-                                return {
-                                    status:
-                                        status,
-
-                                    message:
-                                        String(
-                                            parsed.message
-                                        )
-                                };
-
-                            }
-
-                        }
-                        catch (parseError) {
-
-                            /*
-                               Response was not JSON.
-                               Use plain text if available.
-                            */
-
-                            return {
-                                status:
-                                    status,
-
-                                message:
-                                    responseText
-                            };
-
-                        }
-
-                    }
-
-                }
-                catch (textError) {
-
-                    console.warn(
-                        "Could not read Edge Function response:",
-                        textError
-                    );
-
-                }
-
-            }
-
-
-            /* =========================================
-               STATUS-BASED FALLBACK
-            ========================================= */
-
-            if (
-                status === 409
-            ) {
-
-                return {
-                    status:
-                        409,
-
-                    message:
-                        "Email already registered. Please login."
-                };
-
-            }
-
-        }
-
-    }
-    catch (errorReadingResponse) {
-
-        console.warn(
-            "Unable to read Edge Function error response:",
-            errorReadingResponse
-        );
-
-    }
-
-
-    /* =============================================
-       CHECK ERROR MESSAGE ITSELF
-    ============================================= */
-
-    const rawMessage =
-        error?.message
-            ? String(
-                error.message
-            )
-            : "";
-
-
-    const lowerMessage =
-        rawMessage.toLowerCase();
-
-
-    if (
-        lowerMessage.includes(
-            "already registered"
-        ) ||
-        lowerMessage.includes(
-            "institute email"
-        ) &&
-        lowerMessage.includes(
-            "already"
-        )
-    ) {
-
-        return {
-            status:
-                409,
-
-            message:
-                "Email already registered. Please login."
-        };
-
-    }
-
-
-    return {
-        status:
-            null,
-
-        message:
-            rawMessage ||
-            fallbackMessage
-    };
-
-}
-
-
-/* =====================================================
    OTP TIMER
 ===================================================== */
 
@@ -669,7 +438,9 @@ function startOtpTimer() {
         otpTimerInterval
     );
 
-    otpSeconds = 30;
+
+    otpSeconds =
+        30;
 
 
     const timer =
@@ -677,10 +448,12 @@ function startOtpTimer() {
             "otpTimer"
         );
 
+
     const resendButton =
         document.getElementById(
             "resendOtpBtn"
         );
+
 
     const sendButton =
         document.getElementById(
@@ -744,6 +517,7 @@ function startOtpTimer() {
                     otpTimerInterval
                 );
 
+
                 otpTimerInterval =
                     null;
 
@@ -792,10 +566,12 @@ async function sendEmailOTP() {
             "instituteEmail"
         );
 
+
     const sendButton =
         document.getElementById(
             "sendEmailOtp"
         );
+
 
     const otpInput =
         document.getElementById(
@@ -804,7 +580,9 @@ async function sendEmailOTP() {
 
 
     if (!emailInput) {
+
         return false;
+
     }
 
 
@@ -818,10 +596,6 @@ async function sendEmailOTP() {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
-    /* =================================================
-       COOLDOWN
-    ================================================= */
-
     if (
         otpSeconds > 0
     ) {
@@ -831,10 +605,6 @@ async function sendEmailOTP() {
     }
 
 
-    /* =================================================
-       EMAIL VALIDATION
-    ================================================= */
-
     if (!email) {
 
         showError(
@@ -842,6 +612,7 @@ async function sendEmailOTP() {
             "instituteEmailError",
             "Please enter the institute email address."
         );
+
 
         emailInput.focus();
 
@@ -862,6 +633,7 @@ async function sendEmailOTP() {
             "Please enter a valid email address."
         );
 
+
         emailInput.focus();
 
         return false;
@@ -875,12 +647,9 @@ async function sendEmailOTP() {
     );
 
 
-    /* =================================================
-       SUPABASE CHECK
-    ================================================= */
-
     if (
-        typeof supabaseClient === "undefined" ||
+        typeof supabaseClient ===
+        "undefined" ||
         !supabaseClient
     ) {
 
@@ -890,17 +659,15 @@ async function sendEmailOTP() {
             "OTP service is not available. Please try again."
         );
 
+
         return false;
 
     }
 
 
-    /* =================================================
-       RESET OTP STATE
-    ================================================= */
-
     emailOtpVerified =
         false;
+
 
     lastOtpEmail =
         "";
@@ -908,7 +675,8 @@ async function sendEmailOTP() {
 
     if (otpInput) {
 
-        otpInput.value = "";
+        otpInput.value =
+            "";
 
         otpInput.classList.remove(
             "input-valid"
@@ -923,10 +691,6 @@ async function sendEmailOTP() {
     );
 
 
-    /* =================================================
-       BUTTON
-    ================================================= */
-
     if (sendButton) {
 
         sendButton.disabled =
@@ -939,10 +703,6 @@ async function sendEmailOTP() {
 
 
     try {
-
-        /* =============================================
-           CALL SEND-OTP
-        ============================================= */
 
         const {
             data,
@@ -958,10 +718,6 @@ async function sendEmailOTP() {
             );
 
 
-        /* =============================================
-           EDGE FUNCTION ERROR
-        ============================================= */
-
         if (error) {
 
             console.error(
@@ -969,22 +725,14 @@ async function sendEmailOTP() {
                 error
             );
 
-            const edgeError =
-                await getEdgeFunctionErrorMessage(
-                    error,
-                    "Unable to contact OTP service."
-                );
 
             throw new Error(
-                edgeError.message
+                error.message ||
+                "Unable to contact OTP service."
             );
 
         }
 
-
-        /* =============================================
-           RESPONSE
-        ============================================= */
 
         console.log(
             "OTP function response:",
@@ -1005,23 +753,9 @@ async function sendEmailOTP() {
         }
 
 
-        /*
-           IMPORTANT:
-
-           DO NOT READ:
-
-           data.otp
-
-           DO NOT STORE OTP.
-
-           DO NOT COMPARE OTP IN BROWSER.
-
-           The server stores the OTP hash.
-        */
-
-
         lastOtpEmail =
             email;
+
 
         emailOtpVerified =
             false;
@@ -1029,7 +763,8 @@ async function sendEmailOTP() {
 
         if (otpInput) {
 
-            otpInput.value = "";
+            otpInput.value =
+                "";
 
             otpInput.classList.remove(
                 "input-valid"
@@ -1159,6 +894,7 @@ async function verifyEmailOtp() {
             "instituteEmail"
         );
 
+
     const otpInput =
         document.getElementById(
             "emailOtp"
@@ -1186,10 +922,6 @@ async function verifyEmailOtp() {
             .trim();
 
 
-    /* =================================================
-       PREVENT DOUBLE VERIFICATION
-    ================================================= */
-
     if (
         otpVerificationInProgress
     ) {
@@ -1208,10 +940,6 @@ async function verifyEmailOtp() {
     }
 
 
-    /* =================================================
-       EMAIL CHECK
-    ================================================= */
-
     if (!email) {
 
         showError(
@@ -1220,14 +948,11 @@ async function verifyEmailOtp() {
             "Please enter the institute email address."
         );
 
+
         return false;
 
     }
 
-
-    /* =================================================
-       OTP SENT CHECK
-    ================================================= */
 
     if (
         !lastOtpEmail ||
@@ -1240,17 +965,15 @@ async function verifyEmailOtp() {
             "Please send a new OTP for this email address."
         );
 
+
         emailOtpVerified =
             false;
+
 
         return false;
 
     }
 
-
-    /* =================================================
-       OTP LENGTH
-    ================================================= */
 
     if (
         !/^\d{6}$/.test(
@@ -1264,20 +987,19 @@ async function verifyEmailOtp() {
             "Please enter the complete 6-digit OTP."
         );
 
+
         emailOtpVerified =
             false;
+
 
         return false;
 
     }
 
 
-    /* =================================================
-       SUPABASE CHECK
-    ================================================= */
-
     if (
-        typeof supabaseClient === "undefined" ||
+        typeof supabaseClient ===
+        "undefined" ||
         !supabaseClient
     ) {
 
@@ -1286,6 +1008,7 @@ async function verifyEmailOtp() {
             "emailOtpError",
             "OTP verification service is unavailable."
         );
+
 
         return false;
 
@@ -1297,10 +1020,6 @@ async function verifyEmailOtp() {
 
 
     try {
-
-        /* =============================================
-           SERVER-SIDE OTP VERIFICATION
-        ============================================= */
 
         const {
             data,
@@ -1325,15 +1044,9 @@ async function verifyEmailOtp() {
             );
 
 
-            const edgeError =
-                await getEdgeFunctionErrorMessage(
-                    error,
-                    "Unable to verify OTP."
-                );
-
-
             throw new Error(
-                edgeError.message
+                error.message ||
+                "Unable to verify OTP."
             );
 
         }
@@ -1358,10 +1071,6 @@ async function verifyEmailOtp() {
 
         }
 
-
-        /* =============================================
-           SUCCESS
-        ============================================= */
 
         emailOtpVerified =
             true;
@@ -1415,8 +1124,10 @@ async function verifyEmailOtp() {
             otpTimerInterval
         );
 
+
         otpTimerInterval =
             null;
+
 
         otpSeconds =
             0;
@@ -1514,7 +1225,6 @@ if (emailOtpInput) {
 
 /* =====================================================
    EMAIL CHANGE
-   OTP BECOMES INVALID IF EMAIL CHANGES
 ===================================================== */
 
 const instituteEmailInput =
@@ -1553,7 +1263,8 @@ if (instituteEmailInput) {
 
                 if (otpInput) {
 
-                    otpInput.value = "";
+                    otpInput.value =
+                        "";
 
                     otpInput.classList.remove(
                         "input-valid"
@@ -1577,8 +1288,10 @@ if (instituteEmailInput) {
                     otpTimerInterval
                 );
 
+
                 otpTimerInterval =
                     null;
+
 
                 otpSeconds =
                     0;
@@ -1601,6 +1314,181 @@ if (instituteEmailInput) {
 
         }
     );
+
+}
+
+
+/* =====================================================
+   GET ACTUAL EDGE FUNCTION ERROR
+===================================================== */
+
+/*
+   IMPORTANT FIX:
+
+   The register-institute Edge Function returns:
+
+   409 + "Email already registered..."
+       OR
+   409 + "User ID already exists..."
+
+   Therefore 409 by itself is NOT enough to determine
+   which field caused the conflict.
+
+   This function reads the actual server response.
+*/
+
+async function getRegistrationErrorMessage(
+    error
+) {
+
+    let status =
+        error?.context?.status ||
+        null;
+
+
+    let message =
+        "";
+
+
+    try {
+
+        const response =
+            error?.context;
+
+
+        if (
+            response &&
+            typeof response.clone ===
+            "function"
+        ) {
+
+            try {
+
+                const clonedResponse =
+                    response.clone();
+
+
+                const responseData =
+                    await clonedResponse.json();
+
+
+                if (
+                    responseData &&
+                    typeof responseData.message ===
+                    "string"
+                ) {
+
+                    message =
+                        responseData.message.trim();
+
+                }
+
+            }
+            catch (jsonError) {
+
+                console.warn(
+                    "Could not parse Edge Function JSON:",
+                    jsonError
+                );
+
+            }
+
+
+            if (!message) {
+
+                try {
+
+                    const clonedResponse =
+                        response.clone();
+
+
+                    const responseText =
+                        await clonedResponse.text();
+
+
+                    if (responseText) {
+
+                        try {
+
+                            const parsed =
+                                JSON.parse(
+                                    responseText
+                                );
+
+
+                            if (
+                                parsed &&
+                                typeof parsed.message ===
+                                "string"
+                            ) {
+
+                                message =
+                                    parsed.message.trim();
+
+                            }
+                            else {
+
+                                message =
+                                    responseText.trim();
+
+                            }
+
+                        }
+                        catch (
+                            parseError
+                        ) {
+
+                            message =
+                                responseText.trim();
+
+                        }
+
+                    }
+
+                }
+                catch (textError) {
+
+                    console.warn(
+                        "Could not read Edge Function text:",
+                        textError
+                    );
+
+                }
+
+            }
+
+        }
+
+    }
+    catch (readError) {
+
+        console.warn(
+            "Unable to read Edge Function error response:",
+            readError
+        );
+
+    }
+
+
+    if (!message) {
+
+        message =
+            error?.message
+                ? String(
+                    error.message
+                )
+                : "";
+
+    }
+
+
+    return {
+        status:
+            status,
+
+        message:
+            message
+    };
 
 }
 
@@ -1655,6 +1543,7 @@ if (registerForm) {
                     "Please enter a User ID."
                 );
 
+
                 isValid =
                     false;
 
@@ -1692,6 +1581,7 @@ if (registerForm) {
                     "instituteTypeError",
                     "Please select an institute type."
                 );
+
 
                 isValid =
                     false;
@@ -1731,6 +1621,7 @@ if (registerForm) {
                     "Please enter the institute name."
                 );
 
+
                 isValid =
                     false;
 
@@ -1768,6 +1659,7 @@ if (registerForm) {
                     "instituteAddressError",
                     "Please enter the institute address."
                 );
+
 
                 isValid =
                     false;
@@ -1813,6 +1705,7 @@ if (registerForm) {
                     "Please enter the institute email address."
                 );
 
+
                 isValid =
                     false;
 
@@ -1828,6 +1721,7 @@ if (registerForm) {
                     "instituteEmailError",
                     "Please enter a valid email address."
                 );
+
 
                 isValid =
                     false;
@@ -1870,6 +1764,7 @@ if (registerForm) {
                     "Please enter a valid 10-digit mobile number."
                 );
 
+
                 isValid =
                     false;
 
@@ -1907,6 +1802,7 @@ if (registerForm) {
                     "headNameError",
                     "Please enter the head / authorized person's name."
                 );
+
 
                 isValid =
                     false;
@@ -1962,6 +1858,7 @@ if (registerForm) {
                         "Only PDF, JPG or PNG files are allowed."
                     );
 
+
                     isValid =
                         false;
 
@@ -1992,6 +1889,7 @@ if (registerForm) {
                         "approvalDocumentError",
                         "File size must be 5 MB or less."
                     );
+
 
                     isValid =
                         false;
@@ -2082,6 +1980,7 @@ if (registerForm) {
                     "Please enter the CAPTCHA."
                 );
 
+
                 isValid =
                     false;
 
@@ -2096,6 +1995,7 @@ if (registerForm) {
                     "captchaError",
                     "Incorrect CAPTCHA. Please try again."
                 );
+
 
                 isValid =
                     false;
@@ -2132,6 +2032,7 @@ if (registerForm) {
                     "Please confirm the authorization statement."
                 );
 
+
                 isValid =
                     false;
 
@@ -2162,7 +2063,8 @@ if (registerForm) {
             ========================================= */
 
             if (
-                typeof supabaseClient === "undefined" ||
+                typeof supabaseClient ===
+                "undefined" ||
                 !supabaseClient
             ) {
 
@@ -2170,13 +2072,14 @@ if (registerForm) {
                     "Supabase is not initialized."
                 );
 
+
                 return;
 
             }
 
 
             /* =========================================
-               FINAL EMAIL CHECK
+               FINAL EMAIL / OTP CHECK
             ========================================= */
 
             if (
@@ -2193,6 +2096,7 @@ if (registerForm) {
                     "emailOtpError",
                     "Email was changed. Please verify the new email address."
                 );
+
 
                 return;
 
@@ -2223,21 +2127,8 @@ if (registerForm) {
             try {
 
                 /* =====================================
-                   FINAL SERVER REGISTRATION
-
-                   IMPORTANT:
-
-                   NO anonymous user.
-                   NO auth.signUp().
-                   NO client-side database insert.
-
-                   The Edge Function will:
-
-                   1. Verify the OTP was verified.
-                   2. Create the REAL Supabase user.
-                   3. Insert the institute record.
+                   REGISTER-INSTITUTE EDGE FUNCTION
                 ===================================== */
-
 
                 const {
                     data,
@@ -2281,13 +2172,17 @@ if (registerForm) {
                 /* =====================================
                    EDGE FUNCTION ERROR
 
-                   IMPORTANT FIX:
+                   IMPORTANT:
 
-                   Supabase returns a FunctionsHttpError
-                   for HTTP 409.
+                   DO NOT USE:
 
-                   We now read the actual response
-                   returned by register-institute.
+                       if (status === 409)
+                           email duplicate
+
+                   because both email and User ID
+                   duplicates return 409.
+
+                   Read the actual server message.
                 ===================================== */
 
                 if (error) {
@@ -2298,39 +2193,46 @@ if (registerForm) {
                     );
 
 
-                    const edgeError =
-                        await getEdgeFunctionErrorMessage(
-                            error,
-                            "Registration request failed."
+                    const registrationError =
+                        await getRegistrationErrorMessage(
+                            error
                         );
 
 
+                    const serverMessage =
+                        registrationError.message ||
+                        "";
+
+
+                    const normalizedMessage =
+                        serverMessage
+                            .toLowerCase()
+                            .trim();
+
+
                     console.error(
-                        "Registration server response:",
-                        edgeError
+                        "Registration Edge Function status:",
+                        registrationError.status
+                    );
+
+
+                    console.error(
+                        "Registration Edge Function message:",
+                        serverMessage
                     );
 
 
                     /* =================================
-                       EMAIL ALREADY REGISTERED
+                       EMAIL DUPLICATE
                     ================================= */
 
                     if (
-                        edgeError.status === 409 ||
-                        String(
-                            edgeError.message || ""
+                        normalizedMessage.includes(
+                            "email already registered"
+                        ) ||
+                        normalizedMessage.includes(
+                            "institute email is already registered"
                         )
-                            .toLowerCase()
-                            .includes(
-                                "email already registered"
-                            ) ||
-                        String(
-                            edgeError.message || ""
-                        )
-                            .toLowerCase()
-                            .includes(
-                                "institute email is already registered"
-                            )
                     ) {
 
                         showError(
@@ -2344,12 +2246,6 @@ if (registerForm) {
                             "Email already registered. Please login."
                         );
 
-
-                        /*
-                           Keep the form open.
-
-                           DO NOT reset the form.
-                        */
 
                         if (
                             instituteEmailElement
@@ -2366,17 +2262,37 @@ if (registerForm) {
 
 
                     /* =================================
-                       OTHER CONFLICT
+                       USER ID DUPLICATE
                     ================================= */
 
                     if (
-                        edgeError.status === 409
+                        normalizedMessage.includes(
+                            "user id already exists"
+                        ) ||
+                        normalizedMessage.includes(
+                            "this user id already exists"
+                        )
                     ) {
 
-                        showFormMessage(
-                            edgeError.message ||
-                            "This registration already exists."
+                        showError(
+                            "userId",
+                            "userIdError",
+                            "User ID already exists. Please choose another."
                         );
+
+
+                        showFormMessage(
+                            "User ID already exists. Please choose another."
+                        );
+
+
+                        if (
+                            userIdElement
+                        ) {
+
+                            userIdElement.focus();
+
+                        }
 
 
                         return;
@@ -2385,11 +2301,11 @@ if (registerForm) {
 
 
                     /* =================================
-                       OTHER SERVER ERROR
+                       OTHER ERROR
                     ================================= */
 
                     throw new Error(
-                        edgeError.message ||
+                        serverMessage ||
                         "Registration request failed."
                     );
 
@@ -2412,31 +2328,29 @@ if (registerForm) {
                 ) {
 
                     const serverMessage =
-                        data?.message ||
-                        "Registration could not be completed.";
+                        data?.message
+                            ? String(
+                                data.message
+                            ).trim()
+                            : "";
 
 
-                    /*
-                       Handle duplicate email even if
-                       the function returns HTTP 200
-                       with success:false.
-                    */
+                    const normalizedMessage =
+                        serverMessage
+                            .toLowerCase();
+
+
+                    /* =================================
+                       DUPLICATE EMAIL
+                    ================================= */
 
                     if (
-                        String(
-                            serverMessage
+                        normalizedMessage.includes(
+                            "email already registered"
+                        ) ||
+                        normalizedMessage.includes(
+                            "institute email is already registered"
                         )
-                            .toLowerCase()
-                            .includes(
-                                "already registered"
-                            ) &&
-                        String(
-                            serverMessage
-                        )
-                            .toLowerCase()
-                            .includes(
-                                "email"
-                            )
                     ) {
 
                         showError(
@@ -2451,13 +2365,62 @@ if (registerForm) {
                         );
 
 
+                        if (
+                            instituteEmailElement
+                        ) {
+
+                            instituteEmailElement.focus();
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    /* =================================
+                       DUPLICATE USER ID
+                    ================================= */
+
+                    if (
+                        normalizedMessage.includes(
+                            "user id already exists"
+                        ) ||
+                        normalizedMessage.includes(
+                            "this user id already exists"
+                        )
+                    ) {
+
+                        showError(
+                            "userId",
+                            "userIdError",
+                            "User ID already exists. Please choose another."
+                        );
+
+
+                        showFormMessage(
+                            "User ID already exists. Please choose another."
+                        );
+
+
+                        if (
+                            userIdElement
+                        ) {
+
+                            userIdElement.focus();
+
+                        }
+
+
                         return;
 
                     }
 
 
                     throw new Error(
-                        serverMessage
+                        serverMessage ||
+                        "Registration could not be completed."
                     );
 
                 }
@@ -2487,8 +2450,10 @@ if (registerForm) {
                     otpTimerInterval
                 );
 
+
                 otpTimerInterval =
                     null;
+
 
                 otpSeconds =
                     0;
@@ -2508,8 +2473,10 @@ if (registerForm) {
                 emailOtpVerified =
                     false;
 
+
                 lastOtpEmail =
                     "";
+
 
                 otpVerificationInProgress =
                     false;
@@ -2573,18 +2540,13 @@ if (registerForm) {
 
 
                 errorElements.forEach(
-                    function (error) {
+                    function (errorElement) {
 
-                        error.textContent =
+                        errorElement.textContent =
                             "";
 
                     }
                 );
-
-
-                /*
-                   Keep success message visible.
-                */
 
             }
             catch (error) {
@@ -2595,15 +2557,6 @@ if (registerForm) {
                 );
 
 
-                /*
-                   FINAL SAFETY CHECK
-
-                   If the error somehow reaches this
-                   catch block with a duplicate-email
-                   message, show the friendly message
-                   instead of the raw Supabase error.
-                */
-
                 const errorMessage =
                     error?.message
                         ? String(
@@ -2612,21 +2565,21 @@ if (registerForm) {
                         : "";
 
 
-                const lowerErrorMessage =
-                    errorMessage.toLowerCase();
+                const normalizedError =
+                    errorMessage
+                        .toLowerCase();
 
+
+                /* =====================================
+                   FINAL EMAIL DUPLICATE SAFETY CHECK
+                ===================================== */
 
                 if (
-                    lowerErrorMessage.includes(
-                        "already registered"
+                    normalizedError.includes(
+                        "email already registered"
                     ) ||
-                    (
-                        lowerErrorMessage.includes(
-                            "email"
-                        ) &&
-                        lowerErrorMessage.includes(
-                            "already"
-                        )
+                    normalizedError.includes(
+                        "institute email is already registered"
                     )
                 ) {
 
@@ -2642,10 +2595,62 @@ if (registerForm) {
                     );
 
 
+                    if (
+                        instituteEmailElement
+                    ) {
+
+                        instituteEmailElement.focus();
+
+                    }
+
+
                     return;
 
                 }
 
+
+                /* =====================================
+                   FINAL USER ID DUPLICATE SAFETY CHECK
+                ===================================== */
+
+                if (
+                    normalizedError.includes(
+                        "user id already exists"
+                    ) ||
+                    normalizedError.includes(
+                        "this user id already exists"
+                    )
+                ) {
+
+                    showError(
+                        "userId",
+                        "userIdError",
+                        "User ID already exists. Please choose another."
+                    );
+
+
+                    showFormMessage(
+                        "User ID already exists. Please choose another."
+                    );
+
+
+                    if (
+                        userIdElement
+                    ) {
+
+                        userIdElement.focus();
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                /* =====================================
+                   GENERIC ERROR
+                ===================================== */
 
                 showFormMessage(
                     errorMessage ||
@@ -2729,5 +2734,5 @@ console.log(
 );
 
 console.log(
-    "✅ Duplicate email handling enabled."
+    "✅ Duplicate email/User ID handling enabled."
 );
